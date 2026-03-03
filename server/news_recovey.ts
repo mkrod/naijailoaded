@@ -1,4 +1,4 @@
-import { db, n_db } from "./config/db.config.js"
+/*import { db, n_db } from "./config/db.config.js"
 import { bulkInsertMusic } from "./music_recovery.js";
 
 export const recovery = async () => {
@@ -18,7 +18,7 @@ export const recovery = async () => {
             contentThumbnail = imgMatch[1];
             description = description.replace(imgRegex, '');
         }*/
-
+/*
         // Extract ALL <img> src as thumbnails
         const imgRegex = /<img [^>]*src=["']([^"']+)["'][^>]*>/gi;
         let match;
@@ -52,44 +52,44 @@ export const recovery = async () => {
 
         // Clean title
         let title = p.post_title || '';
-        title = title.replace(/^\[\s*.*?\s*\]\s*/i, '');
+       // title = title.replace(/^\[\s*.*?\s*\]\s*///i, '');
 
-        return {
-            id: undefined,
-            post_id: p.ID.toString(),
-            slug: p.post_name,
-            author_id: p.post_author,
-            title: title.trim(),
-            description: description.trim(),
-            category_id: null, // map later from meta
-            content: content,
-            content_thumbnail: JSON.stringify(content_thumbnail),
-            content_type: 'gist',
-            status: p.post_status === 'publish' ? 'active' : 'inactive',
-            comment_enabled: p.comment_status === 'open',
-            parent_id: p.post_parent || null,
-            created_at: p.post_date,
-            updated_at: p.post_modified,
-        };
-    };
+/* return {
+     id: undefined,
+     post_id: p.ID.toString(),
+     slug: p.post_name,
+     author_id: p.post_author,
+     title: title.trim(),
+     description: description.trim(),
+     category_id: null, // map later from meta
+     content: content,
+     content_thumbnail: JSON.stringify(content_thumbnail),
+     content_type: 'gist',
+     status: p.post_status === 'publish' ? 'active' : 'inactive',
+     comment_enabled: p.comment_status === 'open',
+     parent_id: p.post_parent || null,
+     created_at: p.post_date,
+     updated_at: p.post_modified,
+ };
+};
 
-    // Fix: resolve all async mapping
-    // Resolve all posts first
-    const po = await Promise.all(post.map(newContent));
+// Fix: resolve all async mapping
+// Resolve all posts first
+const po = await Promise.all(post.map(newContent));
 
-    // Filter out posts with broken DropMB links
-    /*const filteredPosts = po.filter(
-        (nc) => nc.content != null && !nc.content.includes('dropmb.com/')
-    );*/
+// Filter out posts with broken DropMB links
+/*const filteredPosts = po.filter(
+ (nc) => nc.content != null && !nc.content.includes('dropmb.com/')
+);*//*
 
-    console.log("Initial News posts: ", post.length)
-    console.log("All Filtered News Posts Length: ", po.length);
+console.log("Initial News posts: ", post.length)
+console.log("All Filtered News Posts Length: ", po.length);
 
-    console.log("All Filtered News Posts: ", po);
-    //await bulkInsertMusic(po);
+console.log("All Filtered News Posts: ", po);
+//await bulkInsertMusic(po);
 
 }
-
+*/
 /**
 SELECT * FROM wpaf_posts 
 WHERE LOWER(post_name) LIKE '%happy-birthday%' 
