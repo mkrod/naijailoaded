@@ -1,13 +1,13 @@
 // src/pages/sitemap.xml.ts
 import { GetServerSideProps } from "next";
-import { getAllPosts } from "@/constants/controllers/posts.controller";
-import { PostContent } from "@/constants/types/post.type";
+import { getPosts } from "@/constants/controllers/posts.controller";
+import { Post } from "@/constants/types/post.type";
 import { clientURL } from "@/constants/variables/global.vars";
 
 const Sitemap = () => null; // no React UI
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  const { data } = await getAllPosts() as { data: PostContent[] };
+  const { data } = await getPosts() as { data: Post[] };
 
   const posts = data?.map(post => `
     <url>
