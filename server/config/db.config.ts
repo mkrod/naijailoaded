@@ -79,7 +79,7 @@ import mysql2, { PoolOptions } from "mysql2/promise";
 import knex, { Knex } from "knex";
 import { Post } from "../types/post.types.js";
 
-
+/*
 const n_db = mysql2.createPool({
     host: "localhost",
     user: "root",
@@ -88,7 +88,7 @@ const n_db = mysql2.createPool({
     queueLimit: 0,
     connectionLimit: 5,
 });
-
+*/
 
 /*const db = mysql2.createPool({
     host: "localhost",
@@ -114,6 +114,9 @@ const n_db = mysql2.createPool({
         return next();
     }
 });*/
+// Add this temporarily near your database connection logic
+console.log("DB_USER:", process.env.DB_USER);
+console.log("DB_PASS_LENGTH:", process.env.DB_PASSWORD);
 
 // Define your connection config once to avoid duplication
 const dbConfig: Knex.MySql2ConnectionConfig & PoolOptions = {
@@ -172,4 +175,4 @@ declare module "knex" {
     }
 }
 
-export { n_db, db, knexDb }
+export { db, knexDb }
