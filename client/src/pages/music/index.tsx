@@ -60,7 +60,8 @@ const Music: FC<Props> = ({ data, categories }): ReactNode => {
     const seoDesc = `Explore the best ${categoryName} tracks on ${siteName}. Streaming and downloads for ${totalResult} tracks. Updated daily for ${new Date().getFullYear()}.`;
 
     const firstItemThumb = results.length > 0
-        ? (JSON.parse(results[0].content_thumbnail ?? "[]") as Thumbnail[])[0]?.url
+        ? typeof results[0].content_thumbnail === "string" ? (JSON.parse(results[0].content_thumbnail ?? "[]") as Thumbnail[])[0]?.url
+            : (results[0].content_thumbnail as Thumbnail)?.url
         : "";
 
     // Multi-Graph Schema: Breadcrumbs + ItemList
@@ -86,7 +87,7 @@ const Music: FC<Props> = ({ data, categories }): ReactNode => {
                         "@type": "MusicRecording",
                         "name": item.title,
                         "url": `${clientURL.toLowerCase()}/${item.content_type?.toLowerCase()}/${item.slug}`,
-                        "image": (JSON.parse(item.content_thumbnail ?? "[]") as Thumbnail[])[0]?.url,
+                        "image": typeof item.content_thumbnail === "string" ? (JSON.parse(item.content_thumbnail ?? "[]") as Thumbnail[])[0]?.url : item.content_thumbnail?.[0]?.url,
                     }
                 }))
             }

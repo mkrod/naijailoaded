@@ -72,7 +72,7 @@ const MusicView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
 
     const mobileClass = isMobile ? "mobile_" : "";
     const contents: Content[] = data.content;
-    const thumbnailObj = (JSON.parse(data.content_thumbnail ?? "[]") as Thumbnail[])?.[0];
+    const thumbnailObj = typeof data.content_thumbnail === "string" ? (JSON.parse(data.content_thumbnail ?? "[]") as Thumbnail[])[0] : data.content_thumbnail?.[0];
 
     const fetchComments = useCallback(async () => {
         try {

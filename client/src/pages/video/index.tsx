@@ -60,7 +60,8 @@ const Video: FC<Props> = ({ data, categories }): ReactNode => {
     const seoDesc = `Stream the latest ${categoryName} videos on ${siteName}. Discover high-quality trending content and viral clips. Found ${totalResult} videos.`;
 
     const firstItemThumb = results.length > 0
-        ? (JSON.parse(results[0].content_thumbnail ?? "[]") as Thumbnail[])[0]?.url
+        ? typeof results[0].content_thumbnail === "string" ? (JSON.parse(results[0].content_thumbnail ?? "[]") as Thumbnail[])[0]?.url
+            : (results[0].content_thumbnail as Thumbnail)?.url
         : "";
 
     // Multi-Graph Schema: Breadcrumbs + Video ItemList
@@ -86,7 +87,7 @@ const Video: FC<Props> = ({ data, categories }): ReactNode => {
                         "@type": "VideoObject",
                         "name": item.title,
                         "description": item.description || seoDesc,
-                        "thumbnailUrl": (JSON.parse(item.content_thumbnail ?? "[]") as Thumbnail[])[0]?.url,
+                        "thumbnailUrl": typeof item.content_thumbnail === "string" ? (JSON.parse(item.content_thumbnail ?? "[]") as Thumbnail[])[0]?.url : item.content_thumbnail?.[0]?.url,
                         "uploadDate": item.created_at,
                         "contentUrl": `${clientURL}/${item.content_type?.toLowerCase()}/${item.slug}`,
                         "url": `${clientURL}/${item.content_type?.toLowerCase()}/${item.slug}`

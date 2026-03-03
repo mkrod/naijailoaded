@@ -137,13 +137,13 @@ const VideoView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
         (comment_id: string) => setState({ comment_ancestor_id: comment_id }),
         []
     );
-
+    const thumbnailObj = typeof data.content_thumbnail === "string" ? (JSON.parse(data.content_thumbnail ?? "[]") as Thumbnail[])[0] : data.content_thumbnail?.[0];
 
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "VideoRecording",
         "name": data.title,
-        "image": data.content_thumbnail,
+        "image": thumbnailObj.url,
         "url": `${clientURL}/video/${data.slug}`,
         "datePublished": data.created_at,
         "description": data.title,
@@ -168,7 +168,7 @@ const VideoView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
                 <title>{`${data.title} — Stream & Download | ${siteName}`}</title>
                 <meta name="description" content={`Stream and download ${data.title}. Get the latest Videos, lyrics, and bio on ${siteName}.`} />
                 <meta property="og:title" content={data.title} />
-                <meta property="og:image" content={data.content_thumbnail} />
+                <meta property="og:image" content={thumbnailObj.url} />
                 <meta property="og:type" content="video.song" />
                 <link rel="canonical" href={`${clientURL}/video/${data.slug}`} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -179,7 +179,7 @@ const VideoView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
                     <div className={styles[`${mobileClass}player_container`]}>
                         {state.isMounted ? (
                             <VideoPlayer
-                                thumbnail={(JSON.parse(data.content_thumbnail) as Thumbnail[])?.[0]?.url}
+                                thumbnail={thumbnailObj.url}
                                 data={contents[activeTrackIndex]}
                                 totalTrack={contents.length}
                                 activeTrack={activeTrackIndex}

@@ -32,7 +32,8 @@ const Search: FC<Props> = ({ data }) => {
 
     // Extract first item thumbnail for Social Media OG image
     const firstItemThumb = results.length > 0
-        ? (JSON.parse(results[0].content_thumbnail ?? "[]") as Thumbnail[])[0]?.url
+        ? typeof results[0].content_thumbnail === "string" ? (JSON.parse(results[0].content_thumbnail ?? "[]") as Thumbnail[])[0]?.url
+            : (results[0].content_thumbnail as Thumbnail)?.url
         : "";
 
     // Structured Data: ItemList + Breadcrumbs + SearchAction

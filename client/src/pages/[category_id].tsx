@@ -56,7 +56,7 @@ const Category: FC<Props> = ({ data, activeCategory }): ReactNode => {
                         "name": item.title,
                         "headline": item.title,
                         "url": `${clientURL.toLowerCase()}/${item.content_type?.toLowerCase()}/${item.slug}`,
-                        "image": (JSON.parse(item.content_thumbnail ?? "[]") as Thumbnail[])[0]?.url,
+                        "image": typeof item.content_thumbnail === "string" ? (JSON.parse(item.content_thumbnail ?? "[]") as Thumbnail[])[0]?.url : item.content_thumbnail?.[0]?.url,
                     }
                 }))
             }
