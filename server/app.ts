@@ -53,13 +53,6 @@ const corsOptions: CorsOptions = {
 app.use(cors(corsOptions));
 
 
-// Server
-const sslOptions = {
-    key: fs.readFileSync("./keys/localhost+1-key.pem"),
-    cert: fs.readFileSync("./keys/localhost+1.pem"),
-};
-const server = https.createServer(sslOptions, app);
-const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 3500;
 
 
 //Rotues
@@ -111,6 +104,23 @@ process.on("unhandledRejection", (reason: unknown): void => {
 });
 
 
-server.listen(PORT, "0.0.0.0", (): void => {
-    return console.log(`Server running on port ${PORT}`);
-});
+
+// Server Logic
+const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 3500;
+const isProd = process.env.NODE_ENV === "production";
+
+if (isProd) {
+    // Production: Standard HTTP (Nginx handles SSL)
+    app.listen(PORT, "0.0.0.0", () => {
+        console.log(`Production Server running on port ${PORT}`);
+    });
+} else {
+    // Local Development: HTTPS
+    const sslOptions = {
+        key: fs.readFileSync("./keys/localhost+1-key.pem"),
+        cert: fs.readFileSync("./keys/localhost+1.pem"),
+    };
+    https.createServer(sslOptions, app).listen(PORT, "0.0.0.0", () => {
+        console.log(`Local HTTPS Server running on port ${PORT}`);
+    });
+}
