@@ -138,11 +138,21 @@ export const serverRequest = async (method: "post" | "get" | "put" | "delete" | 
     //console.log(`Request: ${options.method} ${serverURL}${route}`);
 
     const response = await fetch(`${serverURL}${route}`, options);
-    const text = await response.text(); // Get raw response first
 
     if (!response.ok) {
-        console.log(response.statusText)
-        throw new Error((await response.json()).message);
+        // Read as text first so we don't crash on HTML errors
+        const errorText = await response.text();
+        let errorMessage = response.statusText;
+
+        try {
+            const errorJson = JSON.parse(errorText);
+            errorMessage = errorJson.message || errorMessage;
+        } catch (e) {
+            // It wasn't JSON, so we just use the status text or raw text
+            errorMessage = errorText || errorMessage;
+        }
+
+        throw new Error(errorMessage);
     }
 
     let res;
