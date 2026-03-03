@@ -109,6 +109,7 @@ process.on("unhandledRejection", (reason: unknown): void => {
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 3500;
 const isProd = process.env.NODE_ENV === "production";
 
+console.log("Production?: ", isProd)
 if (isProd) {
     // Production: Standard HTTP (Nginx handles SSL)
     app.listen(PORT, "0.0.0.0", () => {
