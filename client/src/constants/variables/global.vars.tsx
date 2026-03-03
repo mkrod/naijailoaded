@@ -138,7 +138,7 @@ export const serverRequest = async (method: "post" | "get" | "put" | "delete" | 
     //console.log(`Request: ${options.method} ${serverURL}${route}`);
 
     const response = await fetch(`${serverURL}${route}`, options);
-    console.log("Response: ", response);
+    //console.log("Response: ", response);
     if (!response.ok) {
         console.log(response.statusText)
         throw new Error((await response.json()).message);

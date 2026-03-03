@@ -5,7 +5,7 @@ module.exports = {
             name: "Naijailoaded",
             cwd: "./server",
             script: "pnpm",
-            args: "start", // or your entry file like "app.js"
+            args: "./dist/app.js", // or your entry file like "app.js"
             interpreter: "none", // important when calling pnpm/npm directly
             env: {
                 NODE_ENV: "production",

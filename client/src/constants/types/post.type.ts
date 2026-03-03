@@ -5,13 +5,19 @@ export interface Thumbnail {
 export interface Content {
     id: string;
     title?: string;
-    artist?: string;
+    artist?: Post['artist'];
     /*
     * whether post contains embeddable media content
     * 1 or 0 tinytint use Boolean() to convert to js boolean
     */
     is_embeded?: number;// parse as Boolean()
     url: string;
+}
+
+export interface PostOtherMetaData {
+    genre?: string;
+    producer?: string;
+    socialHandles?: Record<string, string>;
 }
 
 export interface PostSQLResult {
@@ -51,7 +57,7 @@ export interface PostSQLResult {
     /**
     * cover image link for the post
     */
-    content_thumbnail: string;
+    content_thumbnail: Thumbnail[];
     /**
      * Content type
      * 'image' | 'video' | 'music' | 'news' | 'advert' | 'others';
@@ -78,6 +84,10 @@ export interface PostSQLResult {
     * is content an album
     */
     is_album: boolean;
+    /**
+* other metadata
+*/
+    others?: PostOtherMetaData;
     /**
     * ISOString of creation date
     */

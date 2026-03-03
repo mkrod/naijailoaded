@@ -137,7 +137,8 @@ const HomeCarousel: FC<Props> = ({
                 onTouchEnd={(e) => handleEnd(e.changedTouches[0].clientX)}
             >
                 {data.map((item) => {
-                    const img = JSON.parse(item.content_thumbnail) as Thumbnail[];
+
+                    const img = typeof item.content_thumbnail === "string" ? JSON.parse(item.content_thumbnail) as Thumbnail[] : item.content_thumbnail;
 
                     return (
                         <div

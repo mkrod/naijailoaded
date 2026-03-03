@@ -8,7 +8,9 @@ interface Props {
 }
 
 const MusicPlayerPlaceholder: FC<Props> = ({ data }) => {
-    const img = JSON.parse(data.content_thumbnail) as Thumbnail[];
+    const img = typeof data.content_thumbnail === "string" ? JSON.parse(data.content_thumbnail) as Thumbnail[] : data.content_thumbnail;
+    //const img = JSON.parse(data.content_thumbnail) as Thumbnail[];
+
 
     return (
         <div className={styles.wrapper} aria-busy="true" aria-live="polite">

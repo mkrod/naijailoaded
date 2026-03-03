@@ -12,7 +12,8 @@ interface Props {
 
 const HorizontalCard: FC<Props> = ({ data }) => {
     const postUrl = `/${data.content_type?.toLowerCase()}/${data.slug}`;
-    const img = JSON.parse(data.content_thumbnail) as Thumbnail[];
+    const img = typeof data.content_thumbnail === "string" ? JSON.parse(data.content_thumbnail) as Thumbnail[] : data.content_thumbnail;
+    //const img = JSON.parse(data.content_thumbnail) as Thumbnail[];
 
     return (
         <Link
