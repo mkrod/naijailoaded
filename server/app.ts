@@ -104,6 +104,9 @@ process.on("unhandledRejection", (reason: unknown): void => {
 });
 
 
+console.log("--- STARTUP DEBUG ---");
+console.log("DB_USER from process.env:", process.env.DB_USER);
+console.log("DB_HOST from process.env:", process.env.DB_HOST);
 
 // Server Logic
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 3500;
