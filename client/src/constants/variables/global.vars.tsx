@@ -138,6 +138,7 @@ export const serverRequest = async (method: "post" | "get" | "put" | "delete" | 
     //console.log(`Request: ${options.method} ${serverURL}${route}`);
 
     const response = await fetch(`${serverURL}${route}`, options);
+    const text = await response.text(); // Get raw response first
 
     if (!response.ok) {
         console.log(response.statusText)
