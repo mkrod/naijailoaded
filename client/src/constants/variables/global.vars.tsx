@@ -22,11 +22,11 @@ export const defaultDp: string = "/isolated-layout.svg";
 
 export const defaultContentDt = "/advert_img.webp";
 
-export const server = "https://192.168.43.150";
+export const server = process.env.NEXT_PUBLIC_SERVER_URL; //"https://192.168.43.150";
 
 //server
-export const serverPort = ":3500";
-export const serverNamespace = "/api";
+export const serverPort = process.env.NEXT_PUBLIC_SERVER_PORT; //":3500";
+export const serverNamespace = process.env.NEXT_PUBLIC_SERVER_NAMESPACE; //"/api";
 export const serverURL = `${server}${serverPort}${serverNamespace}`.trim();
 
 
