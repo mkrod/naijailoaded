@@ -1,0 +1,154 @@
+/* -     - --- - - - - - - - - - - -   --- - - -  - - - -  -  */
+.media_uploader_container {
+    min-height: fit-content;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+
+.media_uploader_header {
+    display: flex;
+    flex-direction: column;
+    font-family: Space Mono, monospace;
+}
+
+.media_uploader_header_label {
+    font-size: var(--m-font);
+    font-weight: 600;
+    color: var(--color);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: end;
+}
+
+
+.upload_progress {
+    height: 1rem;
+    width: 1rem;
+    border-radius: 50%;
+    transition: width ease-in-out 1s;
+    border: 3px solid var(--accent);
+    border-right-color: transparent;
+    display: flex;
+    align-items: center;
+    align-self: center;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.media_uploader_header_sub_label {
+    font-size: var(--xs-font);
+    font-weight: 500;
+    color: var(--text-fade);
+}
+
+.uploader_container,
+.uploaded_container {
+    background-color: var(--background-sec);
+    height: 15rem;
+    min-width: 100%;
+    border-radius: 0.3rem;
+    border: 2px dashed var(--border-fade);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+}
+
+.thumbnanil_uploader {
+    height: 100%;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    font-size: var(--sm-font);
+    font-family: Space mono, monospace;
+    border-radius: 0.3rem;
+
+}
+
+.thumbnail {
+    height: 100%;
+    width: 100%;
+}
+
+.thumbnail_remove_button,
+.thumbnail_replace_button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: var(--accent);
+    height: 2rem;
+    min-width: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-fade);
+}
+
+.thumbnail_replace_button {
+    padding: 0 1rem;
+    gap: 0.3rem;
+}
+
+.mode_switch_container {
+    height: 1.5rem;
+    width: 4rem;
+    background-color: var(--background-sec);
+    border-radius: 0.2rem;
+    color: var(--color);
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    border: 0.5px solid var(--border-fade);
+    box-shadow: 0 0 5px var(--background-fade);
+    overflow: hidden;
+}
+
+.mode {
+    height: 100%;
+    width: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--sm-font);
+    cursor: pointer;
+}
+
+.active_mode {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background-color: var(--accent);
+    transition: left ease-in-out .3s;
+    color: whitesmoke;
+}
+
+.link {
+    left: 0;
+}
+
+.file {
+    /* If the toggle is 3.5rem, moving it left 3.5rem slides it to the right */
+    left: 2rem;
+}

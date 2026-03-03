@@ -1,0 +1,92 @@
+.wrapper {
+    position: relative;
+    font-family: var(--font-global);
+    min-width: 10rem;
+    width: fit-content;
+    background-color: var(--background-sec);
+}
+
+.trigger {
+    width: 100%;
+    height: 100%;
+    padding: 0.45rem 0.75rem;
+    border-radius: 0.4rem;
+    border: 1px solid var(--border-fade);
+    background: transparent;
+    color: inherit;
+    display: flex;
+    flex-direction: row;
+    gap: 0.4rem;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: border-color ease-in-out .275s;
+}
+
+.trigger_is_open {
+    border-color: var(--accent);
+}
+
+.chevron {
+    font-size: 0.8rem;
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.searchInput {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    padding: 0 1rem 0 0;
+}
+
+.label {
+    font-size: var(--sm-font);
+    font-weight: 600;
+}
+
+.noResults {
+    padding: 0.5rem 1rem;
+    font-size: var(--sm-font);
+    font-weight: 600;
+}
+
+.menu {
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    left: 0;
+    right: 0;
+    background: var(--background);
+    border: 1px solid var(--accent);
+    border-radius: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    height: 20rem;
+    z-index: 20;
+    overflow: auto;
+}
+
+.option {
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-family: var(--font-global);
+    color: var(--color);
+}
+
+.option:hover {
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.active {
+    background: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}

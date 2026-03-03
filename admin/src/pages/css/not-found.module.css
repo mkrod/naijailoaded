@@ -1,0 +1,93 @@
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+    .content {
+        margin-left: 0;
+    }
+
+    .info {
+        font-size: 4.8rem;
+    }
+
+    .text {
+        font-size: 1.5rem;
+    }
+}
+
+/* Container */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Navigation header */
+.nav {
+    font-family: "Inconsolata", monospace;
+    padding: 2.5rem 0 0 5rem;
+    text-transform: uppercase;
+}
+
+/* Display area */
+.display {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-top: 5.7rem;
+    padding: 0 3rem;
+}
+
+/* Image wrapper */
+.imgWrapper {
+    height: auto;
+    width: max(450px, 46%);
+}
+
+/* Image itself */
+.image {
+    height: 95%;
+    width: 95%;
+    object-fit: contain;
+}
+
+/* Content section */
+.content {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    width: max(400px, 40%);
+}
+
+/* Info text */
+.info {
+    font-size: 3rem;
+    line-height: 1.5;
+    font-family: "Space Mono", monospace;
+    word-break: break-word;
+}
+
+/* Body text */
+.text {
+    font-family: "Space Mono", monospace;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.7;
+    width: 20rem;
+}
+
+/* Button styles */
+.btn,
+.btn:active,
+.btn:hover,
+.btn:focus {
+    margin-top: 3rem;
+    font-family: "Space Mono", monospace;
+    color: #fff;
+    background-color: var(--accent);
+    border: none;
+    outline: none;
+    padding: 20px 40px;
+    font-size: 12px;
+    text-transform: uppercase;
+    cursor: pointer;
+    width: fit-content;
+}

@@ -1,0 +1,27 @@
+.input_box_container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-family: inherit;
+}
+
+.input_label {
+    font-weight: 600;
+    font-size: var(--m-font);
+}
+
+.input_box {
+    height: 2.5rem;
+    background-color: var(--background-sec);
+    border-radius: 0.4rem;
+    padding: 0 1rem;
+    font-size: var(--sm-font);
+}
+
+.input_box::placeholder {
+    font-family: sans-serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: var(--sm-font);
+    color: var(--text-fade);
+}

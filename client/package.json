@@ -1,0 +1,26 @@
+{
+  "name": "naijailoaded",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "clear && node server.js",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.3.8",
+    "isomorphic-dompurify": "^2.36.0",
+    "next": "16.1.6",
+    "react": "19.2.3",
+    "react-cookie-consent": "^10.0.1",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
+  }
+}

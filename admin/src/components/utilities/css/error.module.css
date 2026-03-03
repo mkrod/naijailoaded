@@ -1,0 +1,66 @@
+.error_container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    padding: 1rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    /* subtle patterned overlay */
+    background-image:
+        repeating-linear-gradient(45deg,
+            rgba(255, 255, 255, 0.05),
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px,
+            transparent 10px),
+        radial-gradient(circle, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 10px 10px, 20px 20px;
+    background-blend-mode: overlay;
+    z-index: 9999;
+    /* keeps it above other content */
+}
+
+
+
+.error_code {
+    font-size: 4rem;
+    font-weight: 900;
+    font-family: Rye, sans-serif;
+}
+
+.error_title {
+    font-size: 1.5rem;
+    font-family: space mono, sans-serif;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.error_message {
+    font-size: 1rem;
+    font-family: Quicksand, sans-serif;
+    font-weight: 600;
+    text-align: center;
+}
+
+.error_buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 5rem;
+    gap: 2rem;
+}
+
+.error_button {
+    height: 2rem;
+    width: 8rem;
+    background-color: var(--app-accent);
+    border-radius: 0.4rem;
+    font-size: 0.8rem;
+    font-family: Quicksand, sans-serif;
+    font-weight: bold;
+}

@@ -1,0 +1,256 @@
+.container {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mobile_container {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.header_container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-height: 3rem;
+}
+
+.mobile_header_container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-height: fit-content;
+}
+
+.header_label {
+    font-size: var(--xl-font);
+}
+
+.filter_container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    height: 2.5rem;
+    width: 100%;
+}
+
+.mobile_filter_container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    min-height: fit-content;
+}
+
+.search_container {
+    min-width: 10rem;
+    max-height: 100%;
+    margin-left: auto;
+}
+
+.mobile_search_container {
+    width: 100%;
+    height: 2.5rem;
+    display: flex;
+    flex-shrink: 0;
+}
+
+.add_new_post_icon {
+    height: 100%;
+}
+
+.mobile_add_new_post_icon {
+    height: 2.5rem;
+}
+
+
+.add_post_button {
+    height: 100%;
+    width: 8rem;
+    border-radius: 0.3rem;
+    background-color: var(--background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+.main_container {
+    flex: 1;
+    overflow-x: auto;
+    border: 0.5px solid var(--border-fade);
+    border-radius: 0.2rem;
+    position: relative;
+}
+
+.inner_scroll_container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    /* 1280px */
+    min-width: 73rem;
+    height: 100%;
+}
+
+
+.table_header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 1.5rem;
+    background-color: var(--background);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    font-family: Space Mono, monospace;
+}
+
+.table_col {
+    font-size: var(--sm-font);
+    font-weight: 600;
+}
+
+.checkbox {
+    min-width: 5%;
+    max-width: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sn {
+    min-width: 5%;
+    max-width: 5%;
+}
+
+.title {
+    min-width: 25%;
+    max-width: 25%;
+}
+
+.group {
+    min-width: 10%;
+    max-width: 10%;
+}
+
+.category {
+    min-width: 15%;
+    max-width: 15%;
+}
+
+.status {
+    min-width: 10%;
+    max-width: 10%;
+}
+
+.created_at {
+    min-width: 12.5%;
+    max-width: 12.5%;
+}
+
+.updated_at {
+    min-width: 12.5%;
+    max-width: 12.5%;
+}
+
+.actions {
+    min-width: 5%;
+    max-width: 5%;
+    position: relative;
+}
+
+.table_content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 30rem;
+}
+
+.table_empty_container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.mobile_footer_container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.limit_container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: Space Mono, monospace;
+    font-size: var(--sm-font);
+    width: fit-content;
+    flex-shrink: 0;
+}
+
+.limit_drop_down {
+    height: 2rem;
+    width: 4rem;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.limit_value {
+    height: 100%;
+    width: 100%;
+    border: 0.5px solid var(--border-fade);
+    border-radius: 0.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background-color: var(--background);
+}
+
+.limit_options {
+    position: absolute;
+    bottom: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background);
+}
+
+.limit_option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 2rem;
+    transition: background-color 0.2s ease;
+}
+
+.limit_option:hover {
+    background-color: var(--background-sec);
+    cursor: pointer;
+}
+
+
+.pagination_container {
+    margin-left: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.mobile_pagination_container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}

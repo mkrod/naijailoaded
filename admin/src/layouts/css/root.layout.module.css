@@ -1,0 +1,146 @@
+.snackBar_container {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 2rem;
+    min-height: 2rem;
+    min-width: fit-content;
+    max-width: 10rem;
+    padding: 0 2rem;
+    background-color: var(--background);
+    color: var(--color);
+    box-shadow: 0 0 0.4rem var(--background-sec);
+    font-size: var(--m-font);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    flex-shrink: 0;
+    border-radius: 0.3rem;
+}
+
+.prompt_container {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--background-fade);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prompt {
+    min-height: 15rem;
+    width: min(90%, 25rem);
+    background-color: var(--background);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    box-shadow: 0 0 10px var(--background);
+    border-radius: 0.3rem;
+    padding: 1rem;
+}
+
+.prompt_content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.prompt_title {
+    font-size: var(--l-font);
+    font-weight: 700;
+    text-align: center;
+}
+
+.prompt_desc {
+    font-size: var(--sm-font);
+    text-align: center;
+    font-weight: 600;
+}
+
+.prompt_buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    height: 3rem;
+}
+
+.prompt_button {
+    height: 2rem;
+    width: 5rem;
+    border-radius: 0.2rem;
+}
+
+.prompt_accept {
+    background-color: green;
+    color: whitesmoke;
+}
+
+.prompt_decline {
+    background-color: red;
+    color: whitesmoke;
+}
+
+.alert_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    position: fixed;
+    top: -2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    background-color: var(--background);
+    box-shadow: 0 0 1rem var(--background-sec);
+    border-radius: 0.2rem;
+    pointer-events: none;
+    border: 1px solid var(--border-fade);
+    transition: top ease-in .275s;
+}
+
+.alert_container_active {
+    /* for the sake of flawless transition */
+    min-height: 2rem;
+    min-width: 10rem;
+    padding: 0.5rem;
+    /* toogle property */
+    top: 3rem;
+}
+
+.alert_type_icon {
+    display: flex;
+    height: 100%;
+    width: fit-content;
+    align-items: center;
+    justify-content: center;
+}
+
+.alert_text_container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1;
+}
+
+.alert_title {
+    font-weight: 600;
+    font-size: var(--m-font);
+    width: 100%;
+}
+
+.alert_desc {
+    font-size: var(--sm-font);
+    font-weight: 600;
+    width: 100%;
+}
+
+/*Nubia RedMagic 11 Pro Dual Sim - 16GB RAM, 512GB - 5G - Nightfreeze*/

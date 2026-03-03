@@ -1,0 +1,53 @@
+.alert_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    position: fixed;
+    top: -2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    background-color: var(--background);
+    box-shadow: 0 0 1rem var(--background-sec);
+    border-radius: 0.2rem;
+    pointer-events: none;
+    border: 1px solid var(--border-fade);
+    transition: top ease-in .275s;
+}
+
+.alert_container_active {
+    /* for the sake of flawless transition */
+    min-height: 2rem;
+    min-width: 10rem;
+    padding: 0.5rem;
+    /* toogle property */
+    top: 3rem;
+}
+
+.alert_type_icon {
+    display: flex;
+    height: 100%;
+    width: fit-content;
+    align-items: center;
+    justify-content: center;
+}
+
+.alert_text_container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1;
+}
+
+.alert_title {
+    font-weight: 600;
+    font-size: var(--m-font);
+    width: 100%;
+}
+
+.alert_desc {
+    font-size: var(--sm-font);
+    font-weight: 600;
+    width: 100%;
+}
