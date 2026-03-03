@@ -78,7 +78,8 @@ export { n_db, db }
 import mysql2, { PoolOptions } from "mysql2/promise";
 import knex, { Knex } from "knex";
 import { Post } from "../types/post.types.js";
-
+import dotenv from "dotenv";
+dotenv.config();
 /*
 const n_db = mysql2.createPool({
     host: "localhost",
@@ -115,8 +116,7 @@ const n_db = mysql2.createPool({
     }
 });*/
 // Add this temporarily near your database connection logic
-console.log("DB_USER:", process.env.DB_USER);
-console.log("DB_PASS_LENGTH:", process.env.DB_PASSWORD);
+
 
 // Define your connection config once to avoid duplication
 const dbConfig: Knex.MySql2ConnectionConfig & PoolOptions = {
