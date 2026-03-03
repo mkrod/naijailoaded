@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsc --watch & nodemon dist/app.js",
     "build": "tsc",
-    "start": "node dist/app.js"
+    "start": "node dist/app.js",
+    "prod": "tsc && pm2 start dist/app.js --name 'Naijailoaded-Server'"
   },
   "keywords": [],
   "author": "",

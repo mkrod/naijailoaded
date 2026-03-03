@@ -69,13 +69,16 @@ import commentsRoutes from "./routes/comments.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import usersRoutes from "./routes/user.routes.js";
 import miscRoutes from "./routes/misc.routes.js";
+import deployRoutes from "./routes/misc.routes.js";
+
 
 app.use("/api/posts", postRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/comments", commentsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoutes);
-app.use("/api/misc", miscRoutes)
+app.use("/api/misc", miscRoutes);
+app.use("/api/deploy", deployRoutes)
 
 
 //////////////////// Static files ///////////////////
