@@ -184,7 +184,6 @@ const ContentUploader: FC<Props> = ({ tagMedia, tagMeta, index, allContents, pos
                     </div>
                     {processingMedia && (
                         <div className={styles.upload_progress}
-
                         />
                     )}
                 </div>

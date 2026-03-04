@@ -1,6 +1,3 @@
-"use  client"
-
-
 import type { APIArrayResponse, colorScheme, Response } from "../types/global.types";
 import { createTheme } from "@mui/material";
 import type { Post } from "../types/post.type";
@@ -9,9 +6,7 @@ import { MdMusicNote } from "react-icons/md";
 import { PiGooglePhotosLogoBold, PiNewspaperClippingFill } from "react-icons/pi";
 import { HiOutlineHome } from "react-icons/hi2";
 import { HiOutlineCog, HiOutlineViewGrid } from "react-icons/hi";
-import { RiVideoFill } from "react-icons/ri";
-
-import axios, { type AxiosRequestConfig } from 'axios';
+import { RiVideoFill } from "react-icons/ri"
 
 
 //meta
@@ -173,7 +168,7 @@ export const serverRequest = async (method: "post" | "get" | "put" | "delete" | 
 };
 
 
-
+/*
 export const serverRequestWithProgress = async (
     method: "post" | "get" | "put" | "delete" | "patch",
     route: string,
@@ -216,7 +211,7 @@ export const serverRequestWithProgress = async (
 };
 
 
-
+*/
 
 export function isValidPassword(password: string): boolean {
     const hasLetter = /[a-zA-Z]/.test(password);
