@@ -34,6 +34,8 @@ const allowedOrigins = [
 interface CorsOptions {
     origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => void;
     credentials: boolean;
+    methods: string[];
+    allowedHeaders: string[];
     exposedHeaders: string[];
 }
 
@@ -50,7 +52,10 @@ const corsOptions: CorsOptions = {
             callback(new Error("Not allowed by CORS"));
         }
     },
+
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-refresh-token"],
     exposedHeaders: ["set-cookie"],
 };
 
