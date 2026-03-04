@@ -38,16 +38,20 @@ interface CorsOptions {
 }
 
 const corsOptions: CorsOptions = {
-    origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void): void {
+    origin: function (origin, callback) {
+        // LOG THIS to see what the browser is actually sending
+        console.log("Request Origin:", origin);
+        console.log("Allowed Origins:", allowedOrigins);
+
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
+            console.error(`CORS Blocked for origin: ${origin}`);
             callback(new Error("Not allowed by CORS"));
         }
     },
     credentials: true,
     exposedHeaders: ["set-cookie"],
-    // allowedHeaders property removed as it is not valid in CorsOptions
 };
 
 app.use(cors(corsOptions));
