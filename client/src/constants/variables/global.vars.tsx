@@ -25,15 +25,15 @@ export const defaultContentDt = "/advert_img.webp";
 export const server = process.env.NEXT_PUBLIC_SERVER_URL; //"https://192.168.43.150";
 
 //server
-export const serverPort = process.env.NEXT_PUBLIC_SERVER_PORT; //":3500";
-export const serverNamespace = process.env.NEXT_PUBLIC_SERVER_NAMESPACE; //"/api";
+export const serverPort = process.env.NEXT_PUBLIC_SERVER_PORT ?? ":3500"; //":3500";
+export const serverNamespace = process.env.NEXT_PUBLIC_SERVER_NAMESPACE ?? "/api"; //"/api";
 export const serverURL = `${server}${serverPort}${serverNamespace}`.trim();
 
 
 //client
-export const clientPort = ":5190";
-export const clientNamespace = "";
-export const clientURL = `${server}${serverPort}${serverNamespace}`.trim();
+export const clientPort = process.env.NEXT_PUBLIC_CLIENT_PORT ?? ":5190";
+export const clientNamespace = process.env.NEXT_PUBLIC_CLIENT_NAMESPACE ?? "";
+export const clientURL = `${server}${clientPort}${clientNamespace}`.trim();
 
 
 //cookie analytics
@@ -50,7 +50,7 @@ export const googleScope: string = "user_info"
 export const googleSignInLink = `https://accounts.google.com/o/oauth2/auth?client_id=${googleClientID}&redirect_uri=${googleRedirectURI}&response_type=code&scope=openid+email+profile&include_granted_scopes=true&access_type=offline&prompt=consent`;
 
 
-export const colors: Record<string, colorScheme> = {
+export const colors: Record<"light" | "dark", colorScheme> = {
     light: {
         background: '#ffffff',
         backgroundSecondary: '#eeeeee',

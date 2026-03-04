@@ -134,15 +134,31 @@ button:disabled {
   cursor: not-allowed;
 }
 
-ul {
-  list-style: none;
-}
-
-li {
-  list-style: none;
-}
 
 a {
   text-decoration: none;
   color: var(--color);
+}
+
+/* 1. Change the bar color and height */
+#nprogress .bar {
+  background: var(--accent) !important;
+  /* Put your hex color here */
+  height: 3px !important;
+  /* Make it thicker or thinner */
+}
+
+/* 2. Change the color of the "glow" on the right side */
+#nprogress .peg {
+  box-shadow: 0 0 10px var(--accent), 0 0 5px var(--accent-feint) !important;
+}
+
+/* 3. Change the spinner color (the little circle in the corner) */
+#nprogress .spinner-icon {
+  border-top-color: var(--accent) !important;
+  border-left-color: var(--accent) !important;
+}
+
+#nprogress .spinner {
+  display: none !important;
 }

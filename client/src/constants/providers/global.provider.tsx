@@ -41,9 +41,9 @@ export const GlobalProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [note, setNote] = useState<Note | undefined>(undefined);
     const [prompt, setPrompt] = useState<Prompt | undefined>(undefined);
     const [activity, setActivity] = useState(false); // Default to false so LCP isn't blocked by a loader
-    const [isMobile, setIsMobile] = useState(false);
+    const [isMobile, setIsMobile] = useState(true); // mobile by default to avoid squeezing
     const [snackNote, setSnackNote] = useState<Snack | undefined>(undefined);
-    const [activeColor, setActiveColor] = useState<colorScheme>(colors.light);
+    const [activeColor, setActiveColor] = useState<colorScheme>(colors.dark);
 
     const pathHelper = useRef<string | undefined>(undefined);
 

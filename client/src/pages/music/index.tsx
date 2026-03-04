@@ -110,7 +110,12 @@ const Music: FC<Props> = ({ data, categories }): ReactNode => {
                 <meta name="twitter:card" content="summary_large_image" />
 
                 <link rel="canonical" href={`${clientURL}/music${router.query.category_id ? `?category_id=${router.query.category_id}` : ""}`} />
-
+                {Number(page) > 1 && (
+                    <link rel="prev" href={`${clientURL}/music?page=${Number(page) - 1}`} />
+                )}
+                {Number(page) < Math.ceil(Number(totalResult) / Number(perPage)) && (
+                    <link rel="next" href={`${clientURL}/music?page=${Number(page) + 1}`} />
+                )}
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(musicSchema) }}

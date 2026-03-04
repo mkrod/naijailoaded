@@ -207,8 +207,12 @@ const EditableInput: FC<EditableInputProps> = ({
                 className={styles.generate_button}
                 onClick={onProceed}
               >
-                <IoSend size={15} />
-                {proceedButtonText}
+                <div className={styles.generate_button_icon}>
+                  <IoSend size={15} />
+                </div>
+                <span className={styles.generate_button_text}>
+                  {proceedButtonText}
+                </span>
               </button>
             )}
           </div>

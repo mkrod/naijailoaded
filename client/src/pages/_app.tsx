@@ -9,14 +9,35 @@ import { loadAnalytics } from "@/constants/utilities/cookie.analytics";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "@/constants/variables/global.vars";
 import { UserProvider } from "@/constants/providers/user.provider";
+import { useRouter } from "next/router";
+import nProgress from "nprogress";
+import 'nprogress/nprogress.css';
+
 
 export default function App({ Component, pageProps }: AppProps) {
+
+  const router = useRouter();
 
   useEffect(() => {
     if (Cookies.get("naijailoaded_cookie") === "true") {
       loadAnalytics();
     }
   }, []);
+
+  useEffect(() => {
+    const handleStart = () => nProgress.start();
+    const handleStop = () => nProgress.done();
+
+    router.events.on('routeChangeStart', handleStart);
+    router.events.on('routeChangeComplete', handleStop);
+    router.events.on('routeChangeError', handleStop);
+
+    return () => {
+      router.events.off('routeChangeStart', handleStart);
+      router.events.off('routeChangeComplete', handleStop);
+      router.events.off('routeChangeError', handleStop);
+    };
+  }, [router]);
 
 
 

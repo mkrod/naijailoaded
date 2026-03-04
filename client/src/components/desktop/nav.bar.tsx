@@ -59,7 +59,10 @@ const DesktopNavbar: FC<Props> = ({ children }): ReactNode => {
     return (
         <div className={styles.container}>
             <header className={styles.top}>
-                <div className={styles.logo_container}>
+                <div
+                    onClick={() => router.push("/")}
+                    className={styles.logo_container}
+                >
                     <img src={appLogo} className={styles.logo} alt='logo' />
                     <div className={styles.app_name_container}>
                         <span className={styles.naijai}>naijai</span>

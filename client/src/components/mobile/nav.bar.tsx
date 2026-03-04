@@ -69,7 +69,10 @@ const MobileNavbar: FC<Props> = ({ children }): ReactNode => {
                         <span />
                     </div>
                 </div>
-                <div className={styles.logo_container}>
+                <div
+                    className={styles.logo_container}
+                    onClick={() => router.push("/")}
+                >
                     <img src={appLogo} className={styles.logo} alt='logo' />
                     <div className={styles.app_name_container}>
                         <span className={styles.naijai}>naijai</span>

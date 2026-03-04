@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useReducer, useState, type FC } from 'react';
 import Head from 'next/head';
-import dynamic from 'next/dynamic';
-import styles from "./css/music.view.module.css";
+import Image from 'next/image'; // For the main article image
+import styles from "./css/news.view.module.css";
 import DOMPurify from 'isomorphic-dompurify';
 
 // Providers & Controllers
@@ -9,14 +9,13 @@ import { useGlobalProvider } from '@/constants/providers/global.provider';
 import { addComment, getComments } from '@/constants/controllers/comments.controller';
 
 // Components
-import MusicPlayerPlaceholder from '@/components/utilities/music.player.placeholder';
 import EditableInput from '@/components/utilities/input';
 import ActivityIndicator from '@/components/utilities/activity.indicator';
 import EmptyList from '@/components/utilities/empty.list';
 import CommentCard from '@/components/utilities/comment.card';
 
 // Types & Vars
-import { Content, Post, PostFilter, Thumbnail } from '@/constants/types/post.type';
+import { Post, PostFilter, Thumbnail } from '@/constants/types/post.type';
 import { siteName, clientURL, DefaultAPIArrayResponse, formatDate } from '@/constants/variables/global.vars';
 import { Comment } from '@/constants/types/comments.types';
 import { GetServerSideProps } from 'next';
@@ -24,14 +23,10 @@ import { getPost, getPosts } from '@/constants/controllers/posts.controller';
 import { APIArrayResponse, Response } from '@/constants/types/global.types';
 import Share from '@/components/utilities/share';
 import HorizontalCard from '@/components/utilities/horizontal.card';
-import AlbumChildCard from '@/components/utilities/album.child.card';
 
 interface State {
     isMounted: boolean;
-    replying_to: {
-        id: string | null;
-        name: string | null;
-    };
+    replying_to: { id: string | null; name: string | null; };
     comment_ancestor_id: string | null;
     commentText: string;
     comments: APIArrayResponse;
@@ -40,7 +35,6 @@ interface State {
 }
 
 type Action = Partial<State>;
-
 const initialState: State = {
     isMounted: false,
     replying_to: { id: null, name: null },
@@ -59,19 +53,12 @@ interface Props {
     similarPosts: APIArrayResponse;
 }
 
-const MusicPlayer = dynamic(() => import('@/components/utilities/music.player'), {
-    ssr: false,
-    loading: () => <div style={{ minHeight: '150px' }} />
-});
-
-const MusicView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
+const NewsView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
     const { isMobile, setNote } = useGlobalProvider();
     const [state, setState] = useReducer(reducer, initialState);
-    const [activeTrackIndex, setActiveTrackIndex] = useState<number>(0);
     const [createdAt, setCreatedAt] = useState<string | null>(null);
 
     const mobileClass = isMobile ? "mobile_" : "";
-    const contents: Content[] = data.content;
     const thumbnailObj = typeof data.content_thumbnail === "string" ? (JSON.parse(data.content_thumbnail ?? "[]") as Thumbnail[])[0] : data.content_thumbnail?.[0];
 
     const fetchComments = useCallback(async () => {
@@ -89,31 +76,22 @@ const MusicView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
         setCreatedAt(formatDate(data.created_at));
     }, [fetchComments, data.created_at]);
 
-    // --- PURE CONTENT SEO ---
-    const seoTitle = `${data.title} - Listen & Download MP3 | ${siteName}`;
-    const seoDesc = `Stream and download ${data.title}. Check out lyrics, track information, and official audio on ${siteName}.`;
+    // --- NEWS SEO OPTIMIZATION ---
+    const seoTitle = `${data.title} | News & Updates | ${siteName}`;
+    const seoDesc = data.title; // Keep it clean for news
 
     const jsonLd = {
         "@context": "https://schema.org",
-        "@type": data.is_album ? "MusicAlbum" : "MusicRecording",
-        "name": data.title,
-        "image": thumbnailObj?.url,
-        // Add this to help Google link the song to an artist
-        "byArtist": {
-            "@type": "MusicGroup",
-            "name": data.artist?.displayName || "Unknown Artist"
-        },
+        "@type": "NewsArticle",
+        "headline": data.title,
+        "image": [thumbnailObj?.url],
         "datePublished": data.created_at,
-        "description": data.title,
-        "url": `${clientURL}/music/${data.slug}`,
-        //"audio": data.is_album ? undefined : contents[0]?.url,
-        // For singles, this helps Google understand it's a streamable file
-        "audio": data.is_album ? undefined : {
-            "@type": "AudioObject",
-            "contentUrl": contents[0]?.url,
-            "encodingFormat": "audio/mpeg"
-        },
-        "numTracks": data.is_album ? contents.length : 1
+        "dateModified": data.updated_at || data.created_at,
+        "author": [{
+            "@type": "Person",
+            "name": siteName,
+            "url": clientURL
+        }]
     };
 
     const handleSendComment = async () => {
@@ -145,65 +123,41 @@ const MusicView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
                 <meta property="og:title" content={data.title} />
                 <meta property="og:description" content={seoDesc} />
                 <meta property="og:image" content={thumbnailObj?.url} />
-                <meta property="og:type" content="music.song" />
-                <link rel="canonical" href={`${clientURL}/music/${data.slug}`} />
+                <meta property="og:type" content="article" />
+                <link rel="canonical" href={`${clientURL}/news/${data.slug}`} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
             </Head>
 
-            {/* Changed from div to main */}
             <main className={styles[`${mobileClass}container`]}>
-                {/* Changed from div to section */}
                 <section className={styles[`${mobileClass}content_container`]}>
-                    <header className={styles[`${mobileClass}player_container`]}>
-                        {state.isMounted ? (
-                            <MusicPlayer
-                                thumbnail={thumbnailObj?.url}
-                                data={contents[activeTrackIndex]}
-                                totalTrack={contents.length}
-                                activeTrack={activeTrackIndex}
-                                setTrack={setActiveTrackIndex}
+
+                    {/* Replaced Player with Article Featured Image */}
+                    <header className={styles[`${mobileClass}featured_image_container`]}>
+                        {thumbnailObj?.url && (
+                            <img
+                                src={thumbnailObj.url}
+                                alt={data.title}
+                                className={styles.featured_image}
+                                style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
                             />
-                        ) : (
-                            <MusicPlayerPlaceholder data={data} />
                         )}
                     </header>
 
-                    {/* Changed from div to article */}
                     <article className={styles.content_details}>
                         <h1 className={styles.title}>{data.title}</h1>
 
+                        <div className={styles.meta_info}>
+                            <time dateTime={data.created_at} className={styles.created_at}>
+                                Published: {createdAt ?? "--"}
+                            </time>
+                        </div>
+
                         <div
-                            className={styles.description}
+                            className={styles.article_body}
                             dangerouslySetInnerHTML={{ __html: sanitizedDescription }}
                         />
 
-                        <div className={styles.download_container}>
-                            {Boolean(data.is_album) && contents.length > 0 && contents.map((cnt, idx) => (
-                                <AlbumChildCard
-                                    key={idx}
-                                    idx={idx}
-                                    data={cnt}
-                                    activeIndex={activeTrackIndex}
-                                    setActive={setActiveTrackIndex}
-                                />
-                            ))}
-                            {!data.is_album && !Boolean(contents[activeTrackIndex].is_embeded) && contents.length === 1 && (
-                                <a
-                                    className={styles.download_button}
-                                    href={contents[activeTrackIndex].url}
-                                    download={`${data.slug}.mp3`}
-                                    rel="noopener noreferrer"
-                                >
-                                    Download MP3
-                                </a>
-                            )}
-                        </div>
-
-                        <div className={styles.created_data}>
-                            {/* Use time tag for semantic date */}
-                            <time dateTime={data.created_at} className={styles.created_at}>{createdAt ?? "--"}</time>
-                            <span className={styles.created_at}>{`${contents.length} Songs`}</span>
-                        </div>
+                        {/* Removed Album/Music Download logic for News */}
 
                         {state.isMounted && (
                             <section className={styles.comment_section_container}>
@@ -211,12 +165,12 @@ const MusicView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
                                     <div className={styles.comment_box}>
                                         <EditableInput
                                             style={{ height: "10rem" }}
-                                            placeholder={state.replying_to.id ? `Replying to ${state.replying_to.name}` : 'Drop a comment...'}
+                                            placeholder={state.replying_to.id ? `Replying to ${state.replying_to.name}` : 'Join the discussion...'}
                                             value={state.commentText}
                                             onChange={(text) => setState({ commentText: text })}
                                             AIdisabled
                                             showProceedButton
-                                            proceedButtonText='Send'
+                                            proceedButtonText='Post Comment'
                                             onProceed={handleSendComment}
                                         />
                                     </div>
@@ -225,7 +179,7 @@ const MusicView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
                                 <div className={styles.comments}>
                                     {state.loadingComments && <ActivityIndicator size='small' style='spin' cover />}
                                     {!state.loadingComments && state.comments?.results?.length === 0 && (
-                                        <EmptyList title='Be the first to comment!' margin='5rem 0' />
+                                        <EmptyList title='No comments yet.' margin='5rem 0' />
                                     )}
                                     {!state.loadingComments && (state.comments?.results || []).map((comment) => (
                                         <CommentCard
@@ -240,21 +194,19 @@ const MusicView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
                         )}
                     </article>
 
-                    {/* Changed from div to aside as it is supplementary content */}
                     <aside className={styles[`${mobileClass}share_container`]}>
                         <Share data={data} />
                     </aside>
                 </section>
 
-                {(data as any).related?.length > 0 && (
+                {similarPosts?.results?.length > 0 && (
                     <section className={styles.others_container}>
                         <header className={styles.section_two_header}>
-                            <h2 className={styles.section_two_header_text}>You might also like</h2>
+                            <h2 className={styles.section_two_header_text}>Related News</h2>
                             <div className={styles.section_two_header_line} />
                         </header>
-                        {/* Changed from div to ul/li list for better SEO ranking of related items */}
                         <ul className={styles[`${mobileClass}section_two_contents`]}>
-                            {(data as any).related.slice(0, 12).map((sp: Post) => (
+                            {similarPosts.results.slice(0, 12).map((sp: Post) => (
                                 <li key={sp.post_id} style={{ listStyle: 'none' }}>
                                     <HorizontalCard data={sp} />
                                 </li>
@@ -275,15 +227,20 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         const { data, error } = await getPost({ slug });
         if (error || !data) return { notFound: true };
 
+        // Allow more tags for News Articles (like links and lists)
         const sanitizedDescription = DOMPurify.sanitize(data.description || "", {
-            FORBID_TAGS: ['img', 'audio', 'video', 'a', 'h1', 'h2', 'h3', 'hr', 'script'],
-            FORBID_CONTENTS: ['img', 'audio', 'video', 'a', 'h1', 'h2', 'h3', 'hr', 'script'],
+            FORBID_TAGS: ['img', 'audio', 'video', 'a', 'h1', 'h2', 'h3', "h4", "h5", "h6", 'hr', 'script'],
+            //FORBID_CONTENTS: ['img', 'audio', 'video', 'a', 'h1', 'h2', 'h3', 'hr', 'script'],
         });
 
-        const { data: similarPosts } = await getPosts({ content_type: data.content_type, title: slug.split("-")[0] } as PostFilter);
+        // Set content_type specifically to news for related posts
+        const { data: similarPosts } = await getPosts({
+            content_type: "news",
+            title: slug.split("-")[0]
+        } as PostFilter);
 
         return { props: { data, sanitizedDescription, similarPosts } };
     } catch (e) { return { notFound: true }; }
 };
 
-export default MusicView;
+export default NewsView;

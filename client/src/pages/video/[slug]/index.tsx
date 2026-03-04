@@ -139,18 +139,18 @@ const VideoView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
     );
     const thumbnailObj = typeof data.content_thumbnail === "string" ? (JSON.parse(data.content_thumbnail ?? "[]") as Thumbnail[])[0] : data.content_thumbnail?.[0];
 
-    const jsonLd = {
-        "@context": "https://schema.org",
-        "@type": "VideoRecording",
-        "name": data.title,
-        "image": thumbnailObj.url,
-        "url": `${clientURL}/video/${data.slug}`,
-        "datePublished": data.created_at,
-        "description": data.title,
-        "audio": data.content // Helps Google Audio search
-    };
-
-
+    /* const jsonLd = {
+         "@context": "https://schema.org",
+         "@type": "VideoObject",
+         "name": data.title,
+         "image": thumbnailObj.url,
+         "url": `${clientURL}/video/${data.slug}`,
+         "datePublished": data.created_at,
+         "description": data.title,
+         "audio": data.content // Helps Google Audio search
+     };
+ 
+ */
     const contents: Content[] = data.content;
 
     const [activeTrackIndex, setActiveTrackIndex] = useState<number>(0);
@@ -162,6 +162,24 @@ const VideoView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
     }, [data.created_at]);
 
 
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "VideoObject", // Use this instead of VideoRecording
+        "name": data.title,
+        "description": data.description,
+        "thumbnailUrl": thumbnailObj?.url, // Explicitly use thumbnailUrl
+        "uploadDate": data.created_at, // Required by Google
+        "contentUrl": contents[activeTrackIndex]?.url, // Direct link to video
+        "embedUrl": contents[activeTrackIndex]?.is_embeded ? contents[activeTrackIndex].url : undefined,
+        "publisher": {
+            "@type": "Organization",
+            "name": siteName,
+            "logo": {
+                "@type": "ImageObject",
+                "url": `${clientURL}/NL_logo.png`
+            }
+        }
+    };
     return (
         <>
             <Head>
@@ -230,7 +248,10 @@ const VideoView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
                             ) : null}
                         </div>
                         <div className={styles.created_data}>
-                            <span className={styles.created_at}>{createdAt ?? "--"}</span>
+                            {/* Use the <time> tag for semantic dates */}
+                            <time dateTime={data.created_at} className={styles.created_at}>
+                                {createdAt ?? "--"}
+                            </time>
                             <span className={styles.created_at}>{`${contents.length} Videos`}</span>
                         </div>
                         {state.isMounted && (
@@ -288,16 +309,18 @@ const VideoView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
                 {similarPosts?.results?.length > 0 && (
                     <section className={styles.others_container}>
                         <header className={styles.section_two_header}>
-                            <span className={styles.section_two_header_text}>You might also like</span>
+                            {/* H2 helps rank these related video titles */}
+                            <h2 className={styles.section_two_header_text}>You might also like</h2>
                             <div className={styles.section_two_header_line} />
                         </header>
-                        <main className={styles[`${mobileClass}section_two_contents`]}>
+                        {/* Changed main to ul for list semantics */}
+                        <ul className={styles[`${mobileClass}section_two_contents`]}>
                             {similarPosts?.results?.slice(0, 12)?.map((sp) => (
-                                <li key={sp.post_id}>
+                                <li key={sp.post_id} style={{ listStyle: 'none' }}>
                                     <HorizontalCard data={sp} />
                                 </li>
                             ))}
-                        </main>
+                        </ul>
                     </section>
                 )}
             </main >

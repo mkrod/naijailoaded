@@ -34,7 +34,7 @@ const MusicPlayer: FC<Props> = ({ thumbnail, data, totalTrack = 1, activeTrack =
 
         // Artist name: either displayName or first part of title
         const artistSource =
-            //data?.artist?.displayName ??
+            data?.artist?.displayName ??
             data?.title?.split(/\s*[-–]\s*/)[0] ?? "";
 
         // Title name: second part of title (after - or –) or full title

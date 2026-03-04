@@ -104,15 +104,12 @@ process.on("unhandledRejection", (reason: unknown): void => {
 });
 
 
-console.log("--- STARTUP DEBUG ---");
-console.log("DB_USER from process.env:", process.env.DB_USER);
-console.log("DB_HOST from process.env:", process.env.DB_HOST);
 
 // Server Logic
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 3500;
 const isProd = process.env.NODE_ENV === "production";
 
-console.log("Production?: ", isProd)
+
 if (isProd) {
     // Production: Standard HTTP (Nginx handles SSL)
     app.listen(PORT, "0.0.0.0", () => {

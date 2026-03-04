@@ -64,12 +64,12 @@ const Search: FC<Props> = ({ data }) => {
 
     const mobileClass = useGlobalProvider().isMobile ? "mobile_" : "";
 
-    const handlePageChange = (_: any, newPage: number) => {
+    /*const handlePageChange = (_: any, newPage: number) => {
         router.push({
             pathname: router.pathname,
             query: { ...router.query, page: newPage },
         }, undefined, { shallow: false });
-    };
+    };*/
 
     return (
         <>
@@ -138,7 +138,7 @@ const Search: FC<Props> = ({ data }) => {
                         count={Math.ceil(Number(totalResult) / Number(perPage))}
                         hidePrevButton={Number(page) < 2}
                         hideNextButton={Number(page) >= Math.ceil(Number(totalResult) / Number(perPage))}
-                        onChange={handlePageChange}
+                    //onChange={handlePageChange}
                     />
                 </nav>
             </main>
