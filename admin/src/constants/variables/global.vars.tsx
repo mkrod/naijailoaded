@@ -12,8 +12,8 @@ import { HiOutlineCog, HiOutlineViewGrid } from "react-icons/hi";
 import { RiVideoFill } from "react-icons/ri";
 
 //meta
-export const siteName = "Naijailoaded";
-export const siteURL = "www.naijailoaded.com.ng";
+export const siteName = import.meta.env.VITE_SITE_NAME;
+export const siteURL = import.meta.env.VITE_CLIENT_URL;
 export const siteDescription = "";
 export const siteKeyWord = "naijaloaded, naijailoaded, naijaload";
 
@@ -24,24 +24,32 @@ export const defaultDp: string = "/isolated-layout.svg";
 
 export const defaultContentDt = "/advert_img.webp";
 
-export const server = "https://192.168.43.150";
 
-//server
-export const serverPort = ":3500";
-export const serverNamespace = "/api";
-export const serverURL = `${server}${serverPort}${serverNamespace}`.trim();
+// SERVER
+const serverBase = import.meta.env.VITE_SERVER_URL ?? "https://192.168.43.150";
+const serverPort = import.meta.env.VITE_SERVER_PORT;
+const serverNamespace = import.meta.env.VITE_SERVER_NAMESPACE ?? "/api";
+
+export const serverURL =
+    `${serverBase}${serverPort ? `:${serverPort}` : ""}${serverNamespace}`.trim();
 
 
-//client
-export const clientPort = ":5190";
-export const clientNamespace = "";
-export const clientURL = `${server}${clientPort}${clientNamespace}`.trim();
+// CLIENT
+const clientBase = import.meta.env.VITE_CLIENT_URL ?? "https://192.168.43.150";
+const clientPort = import.meta.env.VITE_CLIENT_PORT;
+const clientNamespace = import.meta.env.VITE_CLIENT_NAMESPACE ?? "";
 
-//admin
-export const adminPort = ":5180";
-export const adminNamespace = "";
-export const adminURL = `${server}${adminPort}${adminNamespace}`.trim();
+export const clientURL =
+    `${clientBase}${clientPort ? `:${clientPort}` : ""}${clientNamespace}`.trim();
 
+
+// ADMIN
+const adminBase = import.meta.env.VITE_ADMIN_URL ?? "https://192.168.43.150";
+const adminPort = import.meta.env.VITE_ADMIN_PORT;
+const adminNamespace = import.meta.env.VITE_ADMIN_NAMESPACE ?? "/admin";
+
+export const adminURL =
+    `${adminBase}${adminPort ? `:${adminPort}` : ""}${adminNamespace}`.trim();
 
 //cookie analytics
 export const googleAnalyticsID = "G-8KKXVF25ZF";
