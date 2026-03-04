@@ -1,7 +1,8 @@
-import { useState, type FC, type ReactNode } from 'react';
+import { useRef, useState, type FC, type ReactNode, type RefObject } from 'react';
 import styles from "./css/mobile.nav.bar.module.css";
 import { appLogo } from '@/constants/variables/global.vars';
 import NavBar from '../utilities/nav';
+import useClickOutside from '@/constants/utilities/useOutsideClick';
 
 
 interface Props {
@@ -11,11 +12,14 @@ interface Props {
 const MobileNavbar: FC<Props> = ({ children }): ReactNode => {
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const navBarRef = useRef<HTMLElement | null>(null);
+    const closeBar = () => { setIsOpen(false) };
+    useClickOutside(navBarRef as RefObject<Element>, closeBar);
 
 
     return (
         <div className={styles.container}>
-            <nav className={`${styles.nav_container} ${isOpen ? styles.nav_open : ""}`}>
+            <nav ref={navBarRef} className={`${styles.nav_container} ${isOpen ? styles.nav_open : ""}`}>
                 <NavBar
                     isOpen={isOpen}
                     setIsOpen={setIsOpen}

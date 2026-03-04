@@ -48,12 +48,14 @@
     row-gap: 1rem;
     column-gap: 1rem;
     width: 100%;
+    list-style: none;
 }
 
 .mobile_content_container {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    list-style-type: none;
 }
 
 .empty_container {

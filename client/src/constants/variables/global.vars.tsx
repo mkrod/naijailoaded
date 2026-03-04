@@ -30,6 +30,7 @@ export const serverNamespace = process.env.NEXT_PUBLIC_SERVER_NAMESPACE ?? "/api
 export const serverURL = `${server}${serverPort}${serverNamespace}`.trim();
 
 
+
 //client
 export const clientPort = process.env.NEXT_PUBLIC_CLIENT_PORT ?? ":5190";
 export const clientNamespace = process.env.NEXT_PUBLIC_CLIENT_NAMESPACE ?? "";

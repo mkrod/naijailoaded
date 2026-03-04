@@ -22,7 +22,7 @@
 .ticker_move {
     display: flex;
     white-space: nowrap;
-    animation: ticker_scroll 30s linear infinite;
+    animation: ticker_scroll 20s linear infinite;
 }
 
 .ticker_item {
@@ -39,11 +39,11 @@
 
 @keyframes ticker_scroll {
     0% {
-        transform: translateX(100%);
+        transform: translateX(0);
     }
 
     100% {
-        transform: translateX(-100%);
+        transform: translateX(-50%);
     }
 }
 

@@ -1,4 +1,4 @@
-import { FC, ReactNode, use, useEffect, useState } from 'react'
+import { FC, ReactNode, RefObject, use, useEffect, useRef, useState } from 'react'
 import styles from "./css/nav.bar.module.css";
 import { appLogo, googleSignInLink, navLinks, segmentPath, siteName, subLinks } from '@/constants/variables/global.vars';
 import { IoSearch } from 'react-icons/io5';
@@ -12,6 +12,7 @@ import { usePathname } from 'next/navigation';
 import AlertBar from '../utilities/alert';
 import { FcGoogle } from 'react-icons/fc';
 import { useUserProvider } from '@/constants/providers/user.provider';
+import useClickOutside from '@/constants/utilities/useOutsideClick';
 
 interface Props {
     children: ReactNode;
@@ -30,6 +31,10 @@ const MobileNavbar: FC<Props> = ({ children }): ReactNode => {
     const normalize = (p: string | null | undefined) => {
         return p ? p === "/" ? "/" : p.replace(/\/$/, "") : "";
     }
+
+    const navBarRef = useRef<HTMLElement | null>(null);
+    const closeBar = () => { setIsOpen(false) };
+    useClickOutside(navBarRef as RefObject<Element>, closeBar);
 
 
     const isActive = (path: string) => {
@@ -143,9 +148,10 @@ const MobileNavbar: FC<Props> = ({ children }): ReactNode => {
                     ))}
                 </nav>
             )}
-            <nav className={`${styles.navbar_container}  ${isOpen ? styles.navbar_open : ""}`}>
+            <nav ref={navBarRef} className={`${styles.navbar_container}  ${isOpen ? styles.navbar_open : ""}`}>
                 <div className={styles.search_container}>
                     <InputField
+                        id='search-box'
                         label='Search Music, Video...'
                         value={searchTerm}
                         style={{ width: "100%" }}
@@ -153,6 +159,8 @@ const MobileNavbar: FC<Props> = ({ children }): ReactNode => {
                         type='search'
                         autocomplete='off'
                         keyDown={(e) => {
+                            e.preventDefault();   // ← THIS is what you're missing
+
                             if (e.key === "Enter") {
                                 if (searchTerm.length < 3) {
                                     return setNote({ type: "warning", title: "please enter atleast 3 letters" });

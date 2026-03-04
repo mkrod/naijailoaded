@@ -42,6 +42,18 @@
     width: 100%;
 }
 
+
+.featured_image {
+    width: 50%;
+    height: 8rem !important;
+}
+
+
+.mobile_featured_image {
+    width: 100%;
+    height: 8rem !important;
+}
+
 .player_container {
     width: min(35%, 40rem);
     height: 25rem;

@@ -15,7 +15,7 @@ const NewsTicker: React.FC<TickerProps> = ({ items }) => {
         <div className={styles.ticker_wrap}>
             <div className={styles.ticker_title}>BREAKING</div>
             <div className={styles.ticker_move}>
-                {items.map((item) => (
+                {[...items, ...items].map((item) => (
                     <Link
                         key={item.post_id}
                         href={`${clientURL}/news/${item.slug}`}

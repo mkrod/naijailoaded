@@ -1,28 +1,40 @@
-import React, { useState, type CSSProperties, type HTMLInputTypeAttribute } from 'react'
+import React, {
+    useState,
+    type CSSProperties,
+    type HTMLInputTypeAttribute,
+} from "react";
 import styles from "./css/input.field.module.css";
-import { TbEye, TbEyeClosed } from 'react-icons/tb';
-import { IoIosSearch } from 'react-icons/io';
-
+import { TbEye, TbEyeClosed } from "react-icons/tb";
+import { IoIosSearch } from "react-icons/io";
 
 interface AuthInputFieldProps {
+    id: string; // ✅ required unique id
     setValue: (value: string) => void;
     keyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
     value: string | number;
     label: string;
-    type?: HTMLInputTypeAttribute; // Optional, default is "text"
+    type?: HTMLInputTypeAttribute;
     style?: CSSProperties;
-    disabled?: boolean; // Optional, default is false
-    autocomplete?: "on" | "off"; // Optional, default is "on"
-    // Add any other props you need
-
-    /**
-     * whether the box is transparent to use its parent background
-     */
+    disabled?: boolean;
+    autocomplete?: "on" | "off";
     labelStyle?: CSSProperties;
 }
-const InputField: React.FC<AuthInputFieldProps> = ({ setValue, keyDown, value, label, type = "text", style, disabled = false, autocomplete = 'on', labelStyle }): React.JSX.Element => {
 
-    const [textType, setTextType] = useState<"password" | "text">(type === "password" ? "password" : "text" as "password" | "text");
+const InputField: React.FC<AuthInputFieldProps> = ({
+    id,
+    setValue,
+    keyDown,
+    value,
+    label,
+    type = "text",
+    style,
+    disabled = false,
+    autocomplete = "on",
+    labelStyle,
+}): React.JSX.Element => {
+    const [textType, setTextType] = useState<"password" | "text">(
+        type === "password" ? "password" : "text"
+    );
 
     return (
         <div style={style} className={styles.input_box_container}>
@@ -31,40 +43,48 @@ const InputField: React.FC<AuthInputFieldProps> = ({ setValue, keyDown, value, l
                     <IoIosSearch />
                 </div>
             )}
+
             <input
+                id={id} // ✅ proper binding
+                name={id}
                 disabled={disabled}
-                type={textType}
+                type={type === "password" ? textType : type}
                 value={value}
-                name="name"
                 onChange={(e) => setValue(e.target.value)}
-                className={styles.input_box}
-                placeholder=''
                 onKeyDown={keyDown}
                 autoComplete={autocomplete}
-                style={{ width: type === "password" ? "calc(100% - 2rem)" : "100%" }}
+                className={styles.input_box}
+                placeholder=""
+                style={{
+                    width: type === "password" ? "calc(100% - 2rem)" : "100%",
+                }}
             />
+
             <label
+                htmlFor={id} // ✅ now correctly linked
                 style={labelStyle}
-                htmlFor="name"
                 className={`
-                    ${styles.input_label}
-                    ${type === 'search' ? styles.input_label_icon_is_active : ""}
-                 `}
+          ${styles.input_label}
+          ${type === "search" ? styles.input_label_icon_is_active : ""}
+        `}
             >
                 {label}
             </label>
+
             {type === "password" && (
                 <div
-                    onClick={() => setTextType((prev) => prev === "password" ? "text" : "password")}
+                    onClick={() =>
+                        setTextType((prev) =>
+                            prev === "password" ? "text" : "password"
+                        )
+                    }
                     className={styles.password_toogle}
                 >
-                    {textType === "password" && <TbEyeClosed />}
-                    {textType === "text" && <TbEye />}
+                    {textType === "password" ? <TbEyeClosed /> : <TbEye />}
                 </div>
-            )
-            }
+            )}
         </div>
-    )
-}
+    );
+};
 
-export default InputField
+export default InputField;

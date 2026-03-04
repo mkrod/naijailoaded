@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useReducer, useState, type FC } from 'react';
 import Head from 'next/head';
-import Image from 'next/image'; // For the main article image
 import styles from "./css/news.view.module.css";
 import DOMPurify from 'isomorphic-dompurify';
 
@@ -15,7 +14,7 @@ import EmptyList from '@/components/utilities/empty.list';
 import CommentCard from '@/components/utilities/comment.card';
 
 // Types & Vars
-import { Post, PostFilter, Thumbnail } from '@/constants/types/post.type';
+import { Content, Post, PostFilter, Thumbnail } from '@/constants/types/post.type';
 import { siteName, clientURL, DefaultAPIArrayResponse, formatDate } from '@/constants/variables/global.vars';
 import { Comment } from '@/constants/types/comments.types';
 import { GetServerSideProps } from 'next';
@@ -23,6 +22,7 @@ import { getPost, getPosts } from '@/constants/controllers/posts.controller';
 import { APIArrayResponse, Response } from '@/constants/types/global.types';
 import Share from '@/components/utilities/share';
 import HorizontalCard from '@/components/utilities/horizontal.card';
+import ImageViewer from '@/components/utilities/viewable_image';
 
 interface State {
     isMounted: boolean;
@@ -114,6 +114,7 @@ const NewsView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
             setNote({ type: "error", title: err.message });
         } finally { setState({ sending: false }); }
     };
+    const contents = typeof data.content === "string" ? (JSON.parse(data.content) as Content[]) : data.content
 
     return (
         <>
@@ -133,14 +134,18 @@ const NewsView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
 
                     {/* Replaced Player with Article Featured Image */}
                     <header className={styles[`${mobileClass}featured_image_container`]}>
-                        {thumbnailObj?.url && (
-                            <img
-                                src={thumbnailObj.url}
+                        {contents?.map((content) => (
+                            <ImageViewer
+                                key={content.id}
+                                src={content?.url}
                                 alt={data.title}
-                                className={styles.featured_image}
-                                style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
+                                options={{
+                                    thumbnailClassName: styles[`${mobileClass}featured_image`],
+                                    canView: true
+                                }}
+                                caption={data.title}
                             />
-                        )}
+                        ))}
                     </header>
 
                     <article className={styles.content_details}>

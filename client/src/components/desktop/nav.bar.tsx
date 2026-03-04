@@ -86,6 +86,7 @@ const DesktopNavbar: FC<Props> = ({ children }): ReactNode => {
 
                 <div className={styles.top_right}>
                     <InputField
+                        id='search-box'
                         label='Search Music, Video...'
                         value={searchTerm}
                         style={{ width: "100%" }}
@@ -93,6 +94,8 @@ const DesktopNavbar: FC<Props> = ({ children }): ReactNode => {
                         type='search'
                         autocomplete='off'
                         keyDown={(e) => {
+                            e.preventDefault();
+
                             if (e.key === "Enter") {
                                 if (searchTerm.length < 3) {
                                     return setNote({ type: "warning", title: "please enter atleast 3 letters" });
