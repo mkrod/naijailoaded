@@ -11,6 +11,9 @@ import { HiOutlineHome } from "react-icons/hi2";
 import { HiOutlineCog, HiOutlineViewGrid } from "react-icons/hi";
 import { RiVideoFill } from "react-icons/ri";
 
+import axios, { type AxiosRequestConfig } from 'axios';
+
+
 //meta
 export const siteName = import.meta.env.VITE_SITE_NAME;
 export const siteURL = import.meta.env.VITE_CLIENT_URL;
@@ -177,69 +180,40 @@ export const serverRequestWithProgress = async (
     data?: any,
     type?: "json" | "form" | "formdata",
     responseType: "blob" | "json" = "json",
-    onProgress?: (percent: number) => void // New callback for progress
+    onProgress?: (percent: number) => void
 ): Promise<any> => {
-    return new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        let url = `${serverURL}${route}`;
 
-        // Handle GET params
-        if (method === "get" && data) {
-            url += `?${new URLSearchParams(data).toString()}`;
-        }
+    const config: AxiosRequestConfig = {
+        method: method.toLowerCase(),
+        url: `${serverURL}${route}`,
+        data: method === 'get' ? undefined : data,
+        params: method === 'get' ? data : undefined,
+        responseType: responseType,
+        withCredentials: true,
+        // Axios handles FormData and JSON headers automatically, 
+        // but we'll respect your 'type' parameter for 'form'
+        headers: type === "form" ? { "Content-Type": "application/x-www-form-urlencoded" } : {},
+    };
 
-        xhr.open(method.toUpperCase(), url, true);
-        xhr.withCredentials = true;
-
-        // Set Headers
-        if (type === "json") {
-            xhr.setRequestHeader("Content-Type", "application/json");
-        } else if (type === "form") {
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        }
-        // FormData headers are handled automatically by XHR
-
-        // Progress Tracking (Upload)
-        if (onProgress && xhr.upload) {
-            xhr.upload.onprogress = (event) => {
-                if (event.lengthComputable) {
-                    const percentComplete = (event.loaded / event.total) * 100;
-                    onProgress(percentComplete);
-                }
-            };
-        }
-
-        // Response Handling
-        xhr.responseType = responseType;
-
-        xhr.onload = () => {
-            if (xhr.status >= 200 && xhr.status < 300) {
-                resolve(xhr.response);
-            } else {
-                // Emulating your error handling
-                const errorResponse = xhr.response;
-                reject(new Error(errorResponse?.message || xhr.statusText));
+    // Progress Tracking
+    if (onProgress) {
+        config.onUploadProgress = (progressEvent) => {
+            if (progressEvent.total) {
+                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                onProgress(percentCompleted);
             }
         };
+    }
 
-        xhr.onerror = () => reject(new Error("Network Error"));
-
-        // Body Construction
-        let body: any = null;
-        if (method !== "get" && data) {
-            if (type === "json") {
-                body = JSON.stringify({ ...data });
-            } else if (type === "form") {
-                body = new URLSearchParams({ ...data }).toString();
-            } else if (type === "formdata") {
-                body = data; // FormData instance
-            }
-        }
-
-        xhr.send(body);
-    });
+    try {
+        const response = await axios(config);
+        return response.data;
+    } catch (error: any) {
+        // Match your existing error handling style
+        const errorMessage = error.response?.data?.message || error.message || "Network Error";
+        throw new Error(errorMessage);
+    }
 };
-
 
 
 
