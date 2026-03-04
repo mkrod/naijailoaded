@@ -167,7 +167,9 @@ const CreatePost: FC = (): ReactNode => {
                 throw Error(validate.message);
             }
 
-            const handleProgress = (p: number) => {
+            setUploading({ progress: 10, message: "upload started..." });
+
+            /*const handleProgress = (p: number) => {
                 let message = "";
                 if (p <= 20) {
                     message = "Please Wait..."
@@ -182,10 +184,11 @@ const CreatePost: FC = (): ReactNode => {
                 }
 
                 setUploading({ progress: p, message })
-            };
+            };*/
 
             //proceed
-            const response = await createPost(formState, handleProgress);
+            const response = await createPost(formState);
+            setUploading({ progress: 70, message: "upload finishing..." });
             if (!response.status || ![200, 201].includes(response.status)) {
                 throw Error(response.message);
             }
@@ -196,6 +199,8 @@ const CreatePost: FC = (): ReactNode => {
             setFormState((prev) => ({ ...prev, post: data.post }))
             setNote({ type: "success", title: response.message || "Upload Successful" })
             setFetchingPosts(true); //refresh posts list
+
+            setUploading({ progress: 100, message: "upload done..." });
 
 
         } catch (err: any) {
