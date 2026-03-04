@@ -67,6 +67,7 @@ const Footer: FC = (): ReactNode => {
                 <span className={styles.subscribe_text}>Subscribe to our newsletter</span>
                 <div className={styles.input_submit}>
                     <InputField
+                        id='footer-box'
                         style={{ width: "80%", height: "100%" }}
                         label='Email Address'
                         value={email}
