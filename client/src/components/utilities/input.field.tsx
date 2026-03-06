@@ -50,7 +50,7 @@ const InputField: React.FC<AuthInputFieldProps> = ({
                 disabled={disabled}
                 type={type === "password" ? textType : type}
                 value={value}
-                onInput={(e) => setValue(e.currentTarget.value)}
+                onChange={(e) => setValue(e.target.value)}
                 onKeyDown={keyDown}
                 autoComplete={autocomplete}
                 className={styles.input_box}

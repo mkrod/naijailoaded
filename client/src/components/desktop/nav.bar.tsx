@@ -94,7 +94,7 @@ const DesktopNavbar: FC<Props> = ({ children }): ReactNode => {
                         type='search'
                         autocomplete='off'
                         keyDown={(e) => {
-                            e.preventDefault();
+                            //e.preventDefault();
 
                             if (e.key === "Enter") {
                                 if (searchTerm.length < 3) {

@@ -64,7 +64,7 @@ const MobileNavbar: FC<Props> = ({ children }): ReactNode => {
 
     return (
         <div className={styles.container}>
-            <header className={styles.top}>
+            <header ref={navBarRef} className={styles.top}>
                 <div className={styles.bar_container}>
                     <div
                         onClick={() => setIsOpen(!isOpen)}
@@ -96,6 +96,73 @@ const MobileNavbar: FC<Props> = ({ children }): ReactNode => {
                         rounded={false}
                     />
                 </div>
+                <nav className={`${styles.navbar_container}  ${isOpen ? styles.navbar_open : ""}`}>
+                    <div className={styles.search_container}>
+                        <InputField
+                            id='search-box'
+                            label='Search Music, Video...'
+                            value={searchTerm}
+                            style={{ width: "100%" }}
+                            setValue={(searchTerm) => setSearchTerm(searchTerm)}
+                            type='search'
+                            autocomplete='off'
+                            keyDown={(e) => {
+                                //e.preventDefault();   // ← THIS is what you're missing
+
+                                if (e.key === "Enter") {
+                                    if (searchTerm.length < 3) {
+                                        return setNote({ type: "warning", title: "please enter atleast 3 letters" });
+                                    }
+                                    router.push(`/search?q=${searchTerm?.toLowerCase()}`);
+
+                                    setIsOpen(false);
+                                }
+                            }}
+
+                        />
+                    </div>
+                    <div className={styles.minor_links}>
+                        {navLinks.map(({ name, path }, idx) => (
+                            <Link
+                                href={path}
+                                onClick={() => setIsOpen(!isOpen)}
+                                key={idx}
+                                className={`${styles.minor_link} ${isActive(path) ? styles.path_active : ""}`}
+                            >
+                                <span className={styles.link}>{name}</span>
+                            </Link>
+                        ))}
+                    </div>
+                    <div className={styles.have_account}>
+                        {/*<span>Have an account?</span>
+                    <button className={styles.sign_in_button}>Sign in</button>*/}
+                        {!user && (
+                            <Link
+                                href={googleSignInLink}
+                                target='_self'
+                                className={styles.sign_in_button}>
+                                <FcGoogle size={20} />
+                                Sign in with google
+                            </Link>
+                        )}
+                        {user && (
+                            <div className={styles.user_name}>
+                                <span>Hello, {Object.values(userNames).join(" ")}</span>
+                                <button
+                                    className={styles.sign_out_button}
+                                >
+                                    <MdLogout size={20} />
+                                    Logout
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                    <div className={styles.social_links}>
+                        <div className={styles.social_link}>
+
+                        </div>
+                    </div>
+                </nav>
             </header>
             <header className={styles.bottom}>
                 {!headlineText.trim() && (
@@ -148,73 +215,6 @@ const MobileNavbar: FC<Props> = ({ children }): ReactNode => {
                     ))}
                 </nav>
             )}
-            <nav ref={navBarRef} className={`${styles.navbar_container}  ${isOpen ? styles.navbar_open : ""}`}>
-                <div className={styles.search_container}>
-                    <InputField
-                        id='search-box'
-                        label='Search Music, Video...'
-                        value={searchTerm}
-                        style={{ width: "100%" }}
-                        setValue={(searchTerm) => setSearchTerm(searchTerm)}
-                        type='search'
-                        autocomplete='off'
-                        keyDown={(e) => {
-                            e.preventDefault();   // ← THIS is what you're missing
-
-                            if (e.key === "Enter") {
-                                if (searchTerm.length < 3) {
-                                    return setNote({ type: "warning", title: "please enter atleast 3 letters" });
-                                }
-                                router.push(`/search?q=${searchTerm?.toLowerCase()}`);
-
-                                setIsOpen(false);
-                            }
-                        }}
-
-                    />
-                </div>
-                <div className={styles.minor_links}>
-                    {navLinks.map(({ name, path }, idx) => (
-                        <Link
-                            href={path}
-                            onClick={() => setIsOpen(!isOpen)}
-                            key={idx}
-                            className={`${styles.minor_link} ${isActive(path) ? styles.path_active : ""}`}
-                        >
-                            <span className={styles.link}>{name}</span>
-                        </Link>
-                    ))}
-                </div>
-                <div className={styles.have_account}>
-                    {/*<span>Have an account?</span>
-                    <button className={styles.sign_in_button}>Sign in</button>*/}
-                    {!user && (
-                        <Link
-                            href={googleSignInLink}
-                            target='_self'
-                            className={styles.sign_in_button}>
-                            <FcGoogle size={20} />
-                            Sign in with google
-                        </Link>
-                    )}
-                    {user && (
-                        <div className={styles.user_name}>
-                            <span>Hello, {Object.values(userNames).join(" ")}</span>
-                            <button
-                                className={styles.sign_out_button}
-                            >
-                                <MdLogout size={20} />
-                                Logout
-                            </button>
-                        </div>
-                    )}
-                </div>
-                <div className={styles.social_links}>
-                    <div className={styles.social_link}>
-
-                    </div>
-                </div>
-            </nav>
             <AlertBar
                 note={note}
             />
