@@ -43,7 +43,7 @@ const Card: FC<CardProps> = memo(({ commentData, isResponse, replyingTo, setAnce
         } catch (err) {
             let msg = (err as any).message;
             msg = msg?.toLowerCase().includes("please") ? msg : "Plase try again later";
-            console.log("Error Liking Comment: ", msg);
+            //console.log("Error Liking Comment: ", msg);
             setNote({ type: "error", title: msg });
         }
         finally {

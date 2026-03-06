@@ -15,7 +15,7 @@ import { db } from "../config/db.config.js";
 export const requireAuth = (req: AuthRequest, res: Response, next: NextFunction) => {
     const token = req.cookies.accessToken; // read JWT from cookie
 
-    if (!token) return res.status(401).json({ message: "No token provided" });
+    if (!token) return res.status(401).json({ message: "Please sign in" });
 
     try {
         req.user = verifyJwtAccessToken(token);
@@ -23,7 +23,7 @@ export const requireAuth = (req: AuthRequest, res: Response, next: NextFunction)
         req.session_id = String(session_id);
         next();
     } catch {
-        res.status(401).json({ message: "Please sign in to continue" });
+        res.status(401).json({ message: "Please sign in" });
     }
 };
 
