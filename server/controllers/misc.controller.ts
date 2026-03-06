@@ -14,79 +14,9 @@ import { createLibrary } from "./library.controller.js";
 import { CreateLibraryPayload } from "../types/library.types.js";
 import { downloadFile } from "../middlewares/download.js";
 
-
-/*
-export const brandVideo = async (req: AuthRequest, res: Response) => {
-    // 1. Get the file from Multer (using 'file' as you requested)
-    const file = (req as any).file as Express.Multer.File;
-
-    if (!file) {
-        return res.status(400).send({ message: "No file uploaded" });
-    }
-
-    const { watermark } = req.body as { watermark: "true" | "false" };
+const isProd = process.env.NODE_ENV === "production";
 
 
-    console.log("File: ", file);
-    console.log("water mark: ", watermark)
-
-
-
-    if (watermark === "false") {
-        return res.sendFile(file.path); // ✅ CORRECT
-    }
-
-    // 2. Define and verify the watermark path
-    const watermarkPath = path.resolve("./public/assets/nl_watermark.jpeg");
-
-    if (!fs.existsSync(watermarkPath)) {
-        return res.status(500).send({ message: "Watermark missing" });
-    }
-
-    res.setHeader('Content-Type', 'video/mp4');
-    res.setHeader('Content-Disposition', `attachment; filename="branded-${file.originalname}"`);
-
-    // 1. CHANGE: Pass the file.path directly to FFmpeg
-    // This replaces the inputStream/Readable logic
-    ffmpeg(file.path)
-        .input(watermarkPath)
-        .complexFilter([
-            "[1:v]colorkey=0x00FF00:0.3:0.2,format=rgba,colorchannelmixer=aa=0.5,scale=iw*0.15:-1[wm];" +
-            "[0:v][wm]overlay=main_w-overlay_w-20:main_h-overlay_h-20"
-        ])
-        //.complexFilter([
-            // [1:v] is the JPEG logo
-            // colorkey=0x00FF00:0.3:0.2 removes the green (similarity 0.3)
-            // scale=iw*0.15:-1 makes it 15% of the video width
-            // overlay puts it 20px from the bottom-right
-          //  "[1:v]colorkey=0x00FF00:0.3:0.2,scale=iw*0.15:-1[wm];[0:v][wm]overlay=main_w-overlay_w-20:main_h-overlay_h-20"
-        //])
-        .format("mp4")
-        .videoCodec("libx264")
-        .outputOptions([
-            "-preset ultrafast",   // Fast processing
-            "-movflags frag_keyframe+empty_moov" // Helps with streaming buffers
-        ])
-        .on("start", (commandLine) => {
-            console.log("🚀 FFmpeg started with command: " + commandLine);
-        })
-        .on("stderr", (stderrLine) => {
-            // This is where FFmpeg prints its internal logs
-            console.log("FFmpeg Log:", stderrLine);
-        })
-        .on("error", (err) => {
-            console.error("❌ FFmpeg Error:", err.message);
-            if (!res.headersSent) {
-                res.status(500).send("Video processing failed.");
-            }
-        })
-        .on("end", () => {
-            console.log("✅ Processing finished successfully");
-        })
-        .pipe(res, { end: true });
-};
-*/
-//DONE
 export const brandVideo = async (req: AuthRequest, res: Response) => {
     const file = (req as any).file as Express.Multer.File;
     const { watermark, link } = req.body as { watermark: "true" | "false", link?: string };
@@ -100,7 +30,7 @@ export const brandVideo = async (req: AuthRequest, res: Response) => {
 
     const uniqueName = `branded-${library_id}-${Date.now()}.mp4`;
     const outputPath = path.join(uploadDir, uniqueName);
-    const serverPort = process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
+    const serverPort = isProd ? "" : process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
     const serverURI = process.env.SERVER_URL ? `${process.env.SERVER_URL}${serverPort}` : "";
     //console.log(serverURI);
     const publicUrl = `${serverURI}${uploadPath}/${uniqueName}`;
@@ -248,7 +178,7 @@ export const brandMusic = async (req: AuthRequest, res: Response) => {
 
     const uniqueName = `branded-${library_id}-${Date.now()}.mp3`;
     const outputPath = path.join(uploadDir, uniqueName);
-    const serverPort = process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
+    const serverPort = isProd ? "" : process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
     const serverURI = process.env.SERVER_URL ? `${process.env.SERVER_URL}${serverPort}` : "";
     //console.log(serverURI);
     const publicUrl = `${serverURI}${uploadPath}/${uniqueName}`;
@@ -386,122 +316,6 @@ export const brandMusic = async (req: AuthRequest, res: Response) => {
 
 };
 
-/*
-// Helper to get duration for precise placement
-const getDuration = (filePath: string): number => {
-    const probe = spawnSync("ffprobe", [
-        "-v", "error",
-        "-show_entries", "format=duration",
-        "-of", "default=noprint_wrappers=1:nokey=1",
-        filePath
-    ]);
-    const duration = parseFloat(probe.stdout?.toString() || "0");
-    return isNaN(duration) ? 0 : duration;
-};
-
-export const brandMusic = async (req: any, res: any) => {
-    const file = req.file as Express.Multer.File;
-    const { title, artist, album, genre, description, producer, watermark } = req.body;
-
-    if (!file || !file.path) {
-        return res.status(400).send({ message: "No audio file uploaded" });
-    }
-
-    const coverPath = path.resolve("./public/assets/nl_watermark_music.jpg");
-    const jinglePath = "https://naijailoaded.com.ng/wp-content/uploads/2024/09/More-music-at-Naijailoaded.ng-jingle.mp3";
-
-    const ext = path.extname(file.originalname);
-    const finalOutput = file.path.replace(ext, `_branded${ext}`);
-
-    // Sanitize metadata to prevent shell errors
-    const clean = (val: any) => val ? String(val).replace(/[^\w\s-]/g, "").trim() : "";
-
-    // 1. Calculate Timings
-    const mainDur = getDuration(file.path);
-    const jingleDur = 4; // Expected length of jingle in seconds
-
-    const posStart = 3000; // 3 seconds in
-    const posMid = Math.floor((mainDur / 2) * 1000);
-    const posEnd = Math.floor(Math.max(0, (mainDur - jingleDur - 1)) * 1000);
-
-    // 2. Build FFmpeg Arguments
-    let args: string[] = [];
-
-    if (watermark === "true") {
-        args = [
-            "-y",
-            "-i", file.path,   // [0:a] Music
-            "-i", jinglePath,  // [1:a] Jingle
-            "-i", coverPath,   // [2:v] Cover
-            "-filter_complex",
-            `[0:a]volume=0.7[main];` +
-            `[1:a]volume=1.0,asplit=3[j1][j2][j3];` +
-            `[j1]adelay=${posStart}|${posStart}[a1];` +
-            `[j2]adelay=${posMid}|${posMid}[a2];` +
-            `[j3]adelay=${posEnd}|${posEnd}[a3];` +
-            `[main][a1][a2][a3]amix=inputs=4:weights=1 1 1 1:dropout_transition=0[outa]`,
-            "-map", "[outa]",
-            "-map", "2:v"
-        ];
-    } else {
-        args = [
-            "-y",
-            "-i", file.path,
-            "-i", coverPath,
-            "-map", "0:a",
-            "-map", "1:v",
-            "-c:a", "copy" // Fast copy if no watermark
-        ];
-    }
-
-    // 3. Add Common Encoders and Metadata
-    args.push(
-        "-c:v", "mjpeg",
-        "-disposition:v:0", "attached_pic",
-        "-id3v2_version", "3",
-        "-metadata", `title=${clean(title) || 'NaijaLoaded'}`,
-        "-metadata", `artist=${clean(artist) || 'NaijaLoaded'}`,
-        "-metadata", `album=${clean(album) || 'NaijaLoaded Hits'}`,
-        "-metadata", `genre=${clean(genre) || 'Afrobeats'}`,
-        "-metadata", `comment=${clean(description) || 'NaijaLoaded.com'}`,
-        "-metadata", `composer=${clean(producer) || 'NaijaLoaded'}`,
-        finalOutput
-    );
-
-    // 4. Execute
-    const result = spawnSync("ffmpeg", args);
-
-    if (result.status !== 0) {
-        console.error("❌ FFmpeg Error:", result.stderr?.toString());
-        return res.status(500).send("Branding failed during processing.");
-    }
-
-    // Inspect the tagged file
-    parseFile(finalOutput)
-        .then(metadata => {
-            console.log('Title:', metadata.common.title);
-            console.log('Artist:', metadata.common.artist);
-            console.log('Album:', metadata.common.album);
-            console.log('Genre:', metadata.common.genre);
-            console.log('Comment:', metadata.common.comment);
-            console.log('Producer:', metadata.common.composer);
-        })
-        .catch(err => {
-            console.error('Error reading metadata:', err);
-        });
-
-    // 5. Send File and Cleanup
-    res.download(finalOutput, `Branded-${file.originalname}`, (err: any) => {
-        try {
-            if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
-            if (fs.existsSync(finalOutput)) fs.unlinkSync(finalOutput);
-        } catch (cleanupErr) {
-            console.error("Cleanup error:", cleanupErr);
-        }
-    });
-};
-
-*/
 
 export const brandImage = async (req: AuthRequest, res: Response) => {
     const file = (req as any).file as Express.Multer.File;
@@ -516,7 +330,7 @@ export const brandImage = async (req: AuthRequest, res: Response) => {
 
     const uniqueName = `branded-${library_id}-${Date.now()}.png`;
     const outputPath = path.join(uploadDir, uniqueName);
-    const serverPort = process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
+    const serverPort = isProd ? "" : process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
     const serverURI = process.env.SERVER_URL ? `${process.env.SERVER_URL}${serverPort}` : "";
     //console.log(serverURI);
     const publicUrl = `${serverURI}${uploadPath}/${uniqueName}`;

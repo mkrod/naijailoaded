@@ -51,5 +51,5 @@ export const cookieOptions = (days: number): CookieOptions => ({
     sameSite: isProduction ? "none" : "lax",                       // needed for cross-subdomain
     domain: isProduction ? ".naijailoaded.com.ng" : undefined, // allow subdomains
     path: "/",
-    maxAge: days * 24 * 60 * 60,             // convert days → seconds
+    maxAge: days * 24 * 60 * 60 * 1000,             // convert days → seconds
 });
