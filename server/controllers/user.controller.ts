@@ -28,12 +28,25 @@ export const getUserInfo = async (req: AuthRequest, res: Response) => {
 export const validateUserRole = async (req: AuthRequest, res: Response) => {
   try {
     const { role = "user" } = req.body as { role: JwtTokenPayload['role'] };
+    const user_id = req.user!.user_id;
+
     if (role !== "admin" && role !== "user") {
       res.status(400).json({ status: 400, message: "Invalid Request" });
       return;
     }
 
-    const [result] = await db.query("SELECT * FROM users WHERE user_id = ?", [req.user?.user_id || null]);
+
+
+    const [result] = await db.query("SELECT * FROM users WHERE user_id = ?", [user_id]);
+
+    const data = {
+      user: req.user,
+      user_id,
+      roleRecieved: role,
+      userRole: req.user?.role,
+    }
+    console.table(data);
+    console.log("Query returned Result: ", result);
 
     if ((result as User[])[0]?.role !== role) {
       return res.status(403).json({ status: 403, message: "Forbidden" });
