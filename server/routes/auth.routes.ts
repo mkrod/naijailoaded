@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { googleCallback, googleLocalhostCallback, signStaticUser } from "../controllers/auth.controller.js";
+import { googleCallback, googleLocalhostCallback/*, signStaticUser */ } from "../controllers/auth.controller.js";
 const router: Router = Router();
 
 
@@ -12,6 +12,7 @@ router.get("/google/callback", (req, res) => {
         : googleCallback(req, res);
 });
 
-
+/*
 router.post("/static", signStaticUser);
+*/
 export default router;

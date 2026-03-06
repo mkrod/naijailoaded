@@ -28,8 +28,8 @@ export function verifyJwtRefreshToken(token: string): JwtTokenPayload {
     return jwt.verify(token, JWT_REFRESH_TOKEN_SECRET) as JwtTokenPayload;
 }
 
-
-const isProduction = true;//process.env.NODE_ENV === "production"; intentional
+/*
+const isProduction = process.env.NODE_ENV === "production";
 
 export const cookieOptions = (days: number): CookieOptions => {
     return {
@@ -41,3 +41,15 @@ export const cookieOptions = (days: number): CookieOptions => {
         maxAge: days, // 30 days
     }
 };
+*/
+
+const isProduction = process.env.NODE_ENV === "production";
+
+export const cookieOptions = (days: number): CookieOptions => ({
+    secure: isProduction,                     // only over HTTPS in production
+    httpOnly: true,                           // not accessible by JS
+    sameSite: isProduction ? "none" : "lax",                       // needed for cross-subdomain
+    domain: isProduction ? ".naijailoaded.com.ng" : undefined, // allow subdomains
+    path: "/",
+    maxAge: days * 24 * 60 * 60,             // convert days → seconds
+});

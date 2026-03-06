@@ -10,5 +10,5 @@ the existing contents at /wp/contents  are carried  over.
 
 structure.
 
-
-
+Main site accesible at the root path /
+server running on port 3500

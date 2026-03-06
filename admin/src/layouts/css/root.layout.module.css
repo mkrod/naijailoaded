@@ -143,4 +143,19 @@
     width: 100%;
 }
 
+.loading_app_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--background);
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
 /*Nubia RedMagic 11 Pro Dual Sim - 16GB RAM, 512GB - 5G - Nightfreeze*/

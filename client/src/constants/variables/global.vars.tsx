@@ -45,9 +45,9 @@ export const facebookPixelID = "3452294181590573";
 
 //Auth
 
-export const googleClientID: string = "20912650344-lpjm8luidtdc2j1q47p33fpfihjb6lkr.apps.googleusercontent.com";
-export const googleRedirectURI: string = `https://localhost:3500/api/auth/google/callback`;
-export const googleScope: string = "user_info"
+export const googleClientID: string = `${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}`;
+export const googleRedirectURI: string = `${serverURL}${process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_ROUTE}`//process.env.NEXT_PUBLIC_ //`https://localhost:3500`;
+//export const googleScope: string = "user_info"
 export const googleSignInLink = `https://accounts.google.com/o/oauth2/auth?client_id=${googleClientID}&redirect_uri=${googleRedirectURI}&response_type=code&scope=openid+email+profile&include_granted_scopes=true&access_type=offline&prompt=consent`;
 
 

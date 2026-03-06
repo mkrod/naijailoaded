@@ -7,34 +7,35 @@ import { MdCheckCircle, MdError } from "react-icons/md";
 import { Outlet } from "react-router";
 import MobileNavbar from "@/components/mobile/nav.bar";
 import DesktopNavbar from "@/components/desktop/nav.bar";
+import { useEffect } from "react";
+import { checkSession } from "@/constants/controllers/user.controller";
+import { clientURL } from "@/constants/variables/global.vars";
+import { useRouter } from "@/constants/utilities/useRouter";
+import ActivityIndicator from "@/components/utilities/activity.indicator";
 
 const RootLayout = () => {
-    const { note, snackNote, prompt, setPrompt, isMobile } = useGlobalProvider();
-    //const router = useRouter();
+    const { note, snackNote, prompt, setPrompt, isMobile, isLoadingApp, setIsLoadingApp } = useGlobalProvider();
+    const router = useRouter();
 
-    /*
-        useEffect(() => {
-            const gotoAuth = (authPath: string) => {
-                const currentLocation: string = router.pathname;
-                //save path to restore after login and clear it
-                pathHelper.current = currentLocation;
-                router.replace(authPath);
-            }
-            checkSession()
-                .then((res) => {
-                    if (res.message !== "PONG") {
-                        gotoAuth("/auth/login");
-                        return;
-                    }
-                    const resumePage = localStorage.getItem("resume_page");
-                    router.replace(resumePage && resumePage !== "/" ? resumePage : "/app");
-                })
-                .catch((err) => {
-                    console.log("Session Error: ", err);
-                    gotoAuth("/auth/login");
-                })
-        }, []);
-    */
+
+    useEffect(() => {
+        checkSession()
+            .then((res) => {
+                if (res.message !== "PONG") {
+                    window.location.href = clientURL;
+                    return;
+                }
+                const resumePage = localStorage.getItem("resume_page");
+                router.replace(resumePage && resumePage !== "/" ? resumePage : "/");
+                setIsLoadingApp(false);
+            })
+            .catch((err) => {
+                console.log("Session Error: ", err);
+                window.location.href = clientURL;
+                return;
+            });
+    }, []);
+
     return (
         <div className={styles.container}>
             <div className={`${styles.alert_container} ${note ? styles.alert_container_active : ""}`}>
@@ -93,6 +94,15 @@ const RootLayout = () => {
             {snackNote && (
                 <div className={styles.snackBar_container}>
                     {snackNote.message}
+                </div>
+            )}
+            {isLoadingApp && (
+                <div className={styles.loading_app_container}>
+                    <ActivityIndicator
+                        style="spin"
+                        size="big"
+                        color="var(--accent)"
+                    />
                 </div>
             )}
         </div>

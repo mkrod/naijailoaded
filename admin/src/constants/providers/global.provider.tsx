@@ -31,6 +31,9 @@ interface GlobalContextType {
     switchScheme: () => void;
     setAccent: (accent: string) => void;
     pathHelper: RefObject<string | undefined>;
+
+    isLoadingApp: boolean;
+    setIsLoadingApp: Dispatch<SetStateAction<boolean>>;
 }
 
 const GlobalContext = createContext<GlobalContextType | null>(null);
@@ -112,8 +115,10 @@ export const GlobalProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setTimeout(() => setSnackNote(undefined), 3050);
     }, []);
 
+    const [isLoadingApp, setIsLoadingApp] = useState<boolean>(true);
+
     // 2. Memoize the context value to prevent unnecessary re-renders of the entire app
-    const contextValue = useMemo(() => ({
+    const contextValue: GlobalContextType = useMemo(() => ({
         note, setNote,
         snackNote, snackNoteSetter,
         prompt, setPrompt,
@@ -123,8 +128,11 @@ export const GlobalProvider: FC<{ children: ReactNode }> = ({ children }) => {
         userScheme, setUserScheme,
         switchScheme,
         setAccent,
-        pathHelper
-    }), [note, snackNote, snackNoteSetter, prompt, activeColor, isMobile, activity, userScheme, setAccent]);
+        pathHelper,
+
+        isLoadingApp,
+        setIsLoadingApp
+    }), [note, snackNote, snackNoteSetter, prompt, activeColor, isMobile, activity, userScheme, setAccent, isLoadingApp]);
 
     return (
         <GlobalContext.Provider value={contextValue}>

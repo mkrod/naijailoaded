@@ -9,7 +9,7 @@ import path from "path";
 import fs, { stat } from "fs";
 import { parseFile } from "music-metadata";
 import { v4 as uuidv4 } from "uuid";
-import { ASSETS_DIR, TEMP_DIR, UPLOAD_DIR } from "../utilities/path.js";
+import { ASSETS_DIR, TEMP_DIR, UPLOAD_DIR, uploadPath } from "../utilities/path.js";
 import { createLibrary } from "./library.controller.js";
 import { CreateLibraryPayload } from "../types/library.types.js";
 import { downloadFile } from "../middlewares/download.js";
@@ -103,7 +103,7 @@ export const brandVideo = async (req: AuthRequest, res: Response) => {
     const serverPort = process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
     const serverURI = process.env.SERVER_URL ? `${process.env.SERVER_URL}${serverPort}` : "";
     //console.log(serverURI);
-    const publicUrl = `${serverURI}/uploads/${uniqueName}`;
+    const publicUrl = `${serverURI}${uploadPath}/${uniqueName}`;
 
     // Ensure directory exists
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
@@ -250,8 +250,8 @@ export const brandMusic = async (req: AuthRequest, res: Response) => {
     const outputPath = path.join(uploadDir, uniqueName);
     const serverPort = process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
     const serverURI = process.env.SERVER_URL ? `${process.env.SERVER_URL}${serverPort}` : "";
-    console.log(serverURI);
-    const publicUrl = `${serverURI}/uploads/${uniqueName}`;
+    //console.log(serverURI);
+    const publicUrl = `${serverURI}${uploadPath}/${uniqueName}`;
 
     // Ensure directory exists
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
@@ -519,7 +519,7 @@ export const brandImage = async (req: AuthRequest, res: Response) => {
     const serverPort = process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
     const serverURI = process.env.SERVER_URL ? `${process.env.SERVER_URL}${serverPort}` : "";
     //console.log(serverURI);
-    const publicUrl = `${serverURI}/uploads/${uniqueName}`;
+    const publicUrl = `${serverURI}${uploadPath}/${uniqueName}`;
 
     // Ensure directory exists
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });

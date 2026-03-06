@@ -3,6 +3,7 @@ import { authenticateRoute, requireAuth } from "../middlewares/auth.js";
 import { askChatGPT, brandImage, brandMusic, brandVideo } from "../controllers/misc.controller.js";
 import { upload } from "../config/multer.config.js";
 import { TEMP_DIR } from "../utilities/path.js";
+import { autoDeploy } from "../controllers/github.controller.js";
 const router: Router = Router();
 
 
@@ -11,4 +12,6 @@ router.post("/brand-music", requireAuth, authenticateRoute({ role: "admin" }), u
 router.post("/brand-image", requireAuth, authenticateRoute({ role: "admin" }), upload("file", "single", TEMP_DIR), brandImage);
 router.post("/ai/question", requireAuth, authenticateRoute({ role: "admin" }), askChatGPT);
 
+
+router.post("/github/naijailoaded/auto-deploy", autoDeploy);
 export default router;

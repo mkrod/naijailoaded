@@ -78,7 +78,7 @@ export const googleCallback = async (req: Request, res: Response) => {
                 role: "user",
                 user_id,
                 email,
-            } as User]
+            } as User];
         }
 
         //so here we can sign token and send cookie
@@ -94,11 +94,11 @@ export const googleCallback = async (req: Request, res: Response) => {
         const accessToken = generateJwtAccessToken(payload);
         const refreshToken = generateJwtRefreshToken(payload);
 
-        const expiration = 365 * 24 * 60 * 60 * 1000; //remember ? //: 1 * 24 * 60 * 60 * 1000;
+
 
         // set cookies
-        res.cookie("accessToken", accessToken, cookieOptions(expiration));
-        res.cookie("refreshToken", refreshToken, cookieOptions(365 * 24 * 60 * 60 * 1000));
+        res.cookie("accessToken", accessToken, cookieOptions(30));
+        res.cookie("refreshToken", refreshToken, cookieOptions(60));
         const CLIENT_URL = process.env.CLIENT_URL;
         if (!CLIENT_URL) {
             return res.status(201).json({ message: "Successful with error: unable to redirect, please navigate manually" });
@@ -110,7 +110,7 @@ export const googleCallback = async (req: Request, res: Response) => {
     }
 }
 
-
+/*
 export const signStaticUser = (req: Request, res: Response) => {
     console.log(req.body)
 
@@ -131,3 +131,4 @@ export const signStaticUser = (req: Request, res: Response) => {
     res.cookie("accessToken", accessToken, cookieOptions(expiration));
     res.cookie("refreshToken", refreshToken, cookieOptions(365 * 24 * 60 * 60 * 1000)).json({ message: "Done" });
 }
+*/

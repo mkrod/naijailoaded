@@ -1,51 +1,67 @@
 #!/bin/bash
 
-LOCK_FILE="/tmp/naijailoaded_deploy.lock"
+# Configuration
+BASE_DIR="/var/www/nodejs/naijailoaded"
+SERVER_DIR="$BASE_DIR/server"
+CLIENT_DIR="$BASE_DIR/client"
+ADMIN_DIR="$BASE_DIR/admin"
+ADMIN_DEST="/var/www/clients/client0/web18/web/"
 
-if [ -e "$LOCK_FILE" ]; then
-  echo "⚠️ Deployment already in progress."
-  exit 1
+# Colors for feedback
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+echo -e "${BLUE}Forcing Sync with GitHub...${NC}"
+cd $BASE_DIR || { echo -e "${RED}Base directory not found!${NC}"; exit 1; }
+
+# Discard any local server changes and pull fresh
+git fetch --all
+git reset --hard origin/main
+
+# --- 1. EXPRESS SERVER ---
+echo -e "\n--- Processing EXPRESS SERVER ---"
+cd $SERVER_DIR || { echo -e "${RED}Server directory not found!${NC}"; exit 1; }
+pnpm install
+echo "Building Server..."
+pnpm run build
+pm2 delete NL_SERVER 2>/dev/null 
+pm2 start pnpm --name "NL_SERVER" -- start --update-env
+echo -e "${GREEN}NL_SERVER is running.${NC}"
+
+# --- 2. NEXTJS CLIENT ---
+echo -e "\n--- Processing NEXTJS CLIENT ---"
+cd $CLIENT_DIR || { echo -e "${RED}Client directory not found!${NC}"; exit 1; }
+pnpm install
+echo "Building Client..."
+pnpm run build
+pm2 delete NL_CLIENT 2>/dev/null
+pm2 start pnpm --name "NL_CLIENT" -- start --update-env
+echo -e "${GREEN}NL_CLIENT is running on port 5190.${NC}"
+
+
+# --- 3. ADMIN REACT VITE ---
+echo -e "\n--- Processing ADMIN PANEL ---"
+cd $ADMIN_DIR || { echo -e "${RED}Admin directory not found!${NC}"; exit 1; }
+pnpm install
+
+echo "Cleaning local dist and remote destination..."
+rm -rf dist/
+# Clean destination content but keep the folder itself
+rm -rf "${ADMIN_DEST:?}"/*
+echo "Building Admin..."
+pnpm run build
+
+if [ -d "dist" ]; then
+    echo "Deploying to web18..."
+    mkdir -p $ADMIN_DEST
+    cp -RT dist/ $ADMIN_DEST
+    echo -e "${GREEN}Admin files deployed to $ADMIN_DEST${NC}"
+else
+    echo -e "${RED}Build failed: dist folder not found!${NC}"
+    exit 1
 fi
 
-trap "rm -f $LOCK_FILE" EXIT
-touch $LOCK_FILE
-
-echo "🚀 Deploying Naijailoaded..."
-
-PROJECT_ROOT="/var/www/nodejs/naijailoaded"
-cd "$PROJECT_ROOT" || exit 1
-
-# 1. Sync Code
-echo "📦 Pulling latest code..."
-git pull origin main || exit 1
-
-# 2. Build Client (Next.js)
-if [ -d "client" ]; then
-  echo "🧱 Building Frontend..."
-  cd client && pnpm install && pnpm run build
-  
-  # Target for Static Files (Adjust this path if your web root changed)
-  TARGET_DIR="/var/www/clients/client0/web14/web"
-  
-  if [ -d "out" ]; then
-    echo "🚚 Syncing static files..."
-    rsync -aq --delete out/ "$TARGET_DIR"/
-  fi
-  cd "$PROJECT_ROOT"
-fi
-
-# 3. Update & Restart Server
-if [ -d "server" ]; then
-  echo "🔧 Updating Server..."
-  cd server && pnpm install
-  
-  echo "♻️ Restarting Naijailoaded Server..."
-  
-  # The FIX: Use exponential backoff so PM2 doesn't give up on crash
-  pm2 start pnpm --name "naija-server" -- \
-    start --exp-backoff-restart-delay 100 || pm2 restart "naija-server"
-    
-  pm2 save
-fi
-
-echo "✅ Naijailoaded is live!"
+echo -e "\n${GREEN}TOTAL DEPLOYMENT SUCCESSFUL!${NC}"
+pm2 status
