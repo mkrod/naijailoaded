@@ -94,7 +94,7 @@ app.use(/.*/, (req, res) => {
     return ui ? sendError(res, "Route Not Found", 404) : res.json({ status: 404, message: "Route not found!" });
 });
 
-//recovery()
+
 
 //Error handling
 app.use((err: any, req: Request, res: Response, next: Function) => {

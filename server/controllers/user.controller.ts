@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { db } from "../config/db.config.js";
-import { User } from "../types/user.types.js";
+import { JwtTokenPayload, User } from "../types/user.types.js";
 import { AuthRequest } from "../types/auth.type.js";
 //import { CountRow } from "../types/global.types.js";
 //import { deriveTrend, getPreviousDateRange } from "../utilities/index.js";
@@ -24,6 +24,29 @@ export const getUserInfo = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: "Failed to get user info" });
   }
 };
+
+export const validateUserRole = async (req: AuthRequest, res: Response) => {
+  try {
+    const { role = "user" } = req.body as { role: JwtTokenPayload['role'] };
+    if (role !== "admin" && role !== "user") {
+      res.status(400).json({ status: 400, message: "Invalid Request" });
+      return;
+    }
+
+    const [result] = await db.query("SELECT * FROM users WHERE user_id = ?", [req.user?.user_id || null]);
+
+    if ((result as User[])[0]?.role !== role) {
+      return res.status(403).json({ status: 403, message: "Forbidden" });
+    }
+
+    res.status(200).json({ status: 200, message: "PONG" });
+    return;
+  } catch (err) {
+    console.log("Ping Error: ", err);
+    return res.status(500).json({ status: 500, message: "Error" });
+  }
+
+}
 /*
 export const updateUserInfo = async (req: AuthRequest, res: Response) => {
   try {
