@@ -180,7 +180,7 @@ export const brandMusic = async (req: AuthRequest, res: Response) => {
     const outputPath = path.join(uploadDir, uniqueName);
     const serverPort = isProd ? "" : process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
     const serverURI = process.env.SERVER_URL ? `${process.env.SERVER_URL}${serverPort}` : "";
-    //console.log(serverURI);
+    console.log(serverURI);
     const publicUrl = `${serverURI}${uploadPath}/${uniqueName}`;
 
     // Ensure directory exists
@@ -332,7 +332,7 @@ export const brandImage = async (req: AuthRequest, res: Response) => {
     const outputPath = path.join(uploadDir, uniqueName);
     const serverPort = isProd ? "" : process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
     const serverURI = process.env.SERVER_URL ? `${process.env.SERVER_URL}${serverPort}` : "";
-    //console.log(serverURI);
+    console.log(serverURI);
     const publicUrl = `${serverURI}${uploadPath}/${uniqueName}`;
 
     // Ensure directory exists

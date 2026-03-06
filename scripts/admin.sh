@@ -5,8 +5,8 @@ cd /var/www/nodejs/naijailoaded/admin || exit 1
 
 pnpm install
 rm -rf dist/
-rm -rf "${ADMIN_DEST:?}"/*
 pnpm run build
+rm -rf "${ADMIN_DEST:?}"/*
 
 if [ -d "dist" ]; then
     cp -RT dist/ "$ADMIN_DEST"
