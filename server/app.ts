@@ -26,7 +26,8 @@ app.use(cookieParser());
 
 /////// cors  config  ///////
 const allowedOrigins = [
-    process.env.CLIENT_URL,
+    process.env.CLIENT_URL,  //*
+    process.env.CLIENT_URL_TWO, //www.*
     process.env.SERVER_URL,
     process.env.ADMIN_URL
 ];

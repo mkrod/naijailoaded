@@ -235,7 +235,7 @@ const VideoView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
 
                                     />
                                 ))}
-                            {!data.is_album && !Boolean(contents[activeTrackIndex].is_embeded) && contents.length === 1 ? (
+                            {!data.is_album && !Boolean(contents[activeTrackIndex]?.is_embeded) && contents.length === 1 ? (
                                 <a
                                     className={styles.download_button}
                                     href={contents[activeTrackIndex].url}
