@@ -1,3 +1,6 @@
+"use  client"
+
+
 import type { APIArrayResponse, colorScheme, Response } from "../types/global.types";
 import { createTheme } from "@mui/material";
 import type { Post } from "../types/post.type";
@@ -6,8 +9,7 @@ import { MdMusicNote } from "react-icons/md";
 import { PiGooglePhotosLogoBold, PiNewspaperClippingFill } from "react-icons/pi";
 import { HiOutlineHome } from "react-icons/hi2";
 import { HiOutlineCog, HiOutlineViewGrid } from "react-icons/hi";
-import { RiVideoFill } from "react-icons/ri"
-
+import { RiVideoFill } from "react-icons/ri";
 
 //meta
 export const siteName = import.meta.env.VITE_SITE_NAME;
@@ -23,6 +25,7 @@ export const defaultDp: string = "/isolated-layout.svg";
 export const defaultContentDt = "/advert_img.webp";
 
 
+export const server: string = import.meta.env.VITE_SERVER_URL ?? "https://192.168.43.150";
 // SERVER
 const serverBase = import.meta.env.VITE_SERVER_URL ?? "https://192.168.43.150";
 const serverPort = import.meta.env.VITE_SERVER_PORT;
@@ -44,7 +47,7 @@ export const clientURL =
 // ADMIN
 const adminBase = import.meta.env.VITE_ADMIN_URL ?? "https://192.168.43.150";
 const adminPort = import.meta.env.VITE_ADMIN_PORT;
-const adminNamespace = import.meta.env.VITE_ADMIN_NAMESPACE ?? "/admin";
+const adminNamespace = import.meta.env.VITE_ADMIN_NAMESPACE ?? "";
 
 export const adminURL =
     `${adminBase}${adminPort ? `:${adminPort}` : ""}${adminNamespace}`.trim();
@@ -168,50 +171,79 @@ export const serverRequest = async (method: "post" | "get" | "put" | "delete" | 
 };
 
 
-/*
+
 export const serverRequestWithProgress = async (
     method: "post" | "get" | "put" | "delete" | "patch",
     route: string,
     data?: any,
     type?: "json" | "form" | "formdata",
     responseType: "blob" | "json" = "json",
-    onProgress?: (percent: number) => void
+    onProgress?: (percent: number) => void // New callback for progress
 ): Promise<any> => {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        let url = `${serverURL}${route}`;
 
-    const config: AxiosRequestConfig = {
-        method: method.toLowerCase(),
-        url: `${serverURL}${route}`,
-        data: method === 'get' ? undefined : data,
-        params: method === 'get' ? data : undefined,
-        responseType: responseType,
-        withCredentials: true,
-        // Axios handles FormData and JSON headers automatically, 
-        // but we'll respect your 'type' parameter for 'form'
-        headers: type === "form" ? { "Content-Type": "application/x-www-form-urlencoded" } : {},
-    };
+        // Handle GET params
+        if (method === "get" && data) {
+            url += `?${new URLSearchParams(data).toString()}`;
+        }
 
-    // Progress Tracking
-    if (onProgress) {
-        config.onUploadProgress = (progressEvent) => {
-            if (progressEvent.total) {
-                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                onProgress(percentCompleted);
+        xhr.open(method.toUpperCase(), url, true);
+        xhr.withCredentials = true;
+
+        // Set Headers
+        if (type === "json") {
+            xhr.setRequestHeader("Content-Type", "application/json");
+        } else if (type === "form") {
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        }
+        // FormData headers are handled automatically by XHR
+
+        // Progress Tracking (Upload)
+        if (onProgress && xhr.upload) {
+            xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable) {
+                    const percentComplete = (event.loaded / event.total) * 100;
+                    onProgress(percentComplete);
+                }
+            };
+        }
+
+        // Response Handling
+        xhr.responseType = responseType;
+
+        xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                resolve(xhr.response);
+            } else {
+                // Emulating your error handling
+                const errorResponse = xhr.response;
+                reject(new Error(errorResponse?.message || xhr.statusText));
             }
         };
-    }
 
-    try {
-        const response = await axios(config);
-        return response.data;
-    } catch (error: any) {
-        // Match your existing error handling style
-        const errorMessage = error.response?.data?.message || error.message || "Network Error";
-        throw new Error(errorMessage);
-    }
+        xhr.onerror = () => reject(new Error("Network Error"));
+
+        // Body Construction
+        let body: any = null;
+        if (method !== "get" && data) {
+            if (type === "json") {
+                body = JSON.stringify({ ...data });
+            } else if (type === "form") {
+                body = new URLSearchParams({ ...data }).toString();
+            } else if (type === "formdata") {
+                body = data; // FormData instance
+            }
+        }
+
+        xhr.send(body);
+    });
 };
 
 
-*/
+
+
 
 export function isValidPassword(password: string): boolean {
     const hasLetter = /[a-zA-Z]/.test(password);
