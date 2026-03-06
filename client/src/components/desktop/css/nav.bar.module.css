@@ -38,7 +38,7 @@
     text-transform: uppercase;
     font-weight: bolder;
     font-size: 2rem;
-    font-family: "Lilita One", sans-serif;
+    font-family: "Lilita One", sans-serif !important;
 }
 
 .naijai {
@@ -118,10 +118,15 @@
 
 .bottom_headline {
     padding: 0 3rem;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
     font-family: monospace, sans-serif;
+
+    display: -webkit-box;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    /* allow only 1 lines */
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .headline_bold {

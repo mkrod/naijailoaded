@@ -58,6 +58,7 @@ server/news_recovery.ts
 server/video_recovery.ts
 server/media_validation.json
 server/services/google.json
+server/r.ts
 
 
 # =========================

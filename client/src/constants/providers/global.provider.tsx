@@ -77,8 +77,23 @@ export const GlobalProvider: FC<{ children: ReactNode }> = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        const savedScheme = (localStorage.getItem('scheme') as Scheme) || 'light';
-        updateTheme(savedScheme);
+        let savedScheme: string = (localStorage.getItem('scheme') as Scheme) || 'auto';
+        let schemeColor: Scheme = "light";
+
+        if (savedScheme === "auto") {
+            const hour = new Date().getHours();
+
+            // 6:00pm (18) – 7:00am (7) => dark
+            if (hour >= 18 || hour < 7) {
+                schemeColor = "dark";
+            } else {
+                schemeColor = "light";
+            }
+        } else {
+            schemeColor = savedScheme as Scheme; // assignment
+        }
+
+        updateTheme(schemeColor);
     }, [updateTheme]);
 
     const switchScheme = () => {

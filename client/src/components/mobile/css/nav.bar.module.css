@@ -99,7 +99,7 @@
     text-transform: uppercase;
     font-weight: bolder;
     font-size: var(--xl-font);
-    font-family: "Lilita One", sans-serif;
+    font-family: "Lilita One", sans-serif !important;
 }
 
 .naijai {
@@ -166,9 +166,10 @@
     font-family: monospace, sans-serif;
 
     display: -webkit-box;
+    line-clamp: 1;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;
-    /* allow only 2 lines */
+    /* allow only 1 lines */
     overflow: hidden;
     text-overflow: ellipsis;
 }

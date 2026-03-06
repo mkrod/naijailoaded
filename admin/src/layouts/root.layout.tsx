@@ -19,7 +19,7 @@ const RootLayout = () => {
 
 
     useEffect(() => {
-        checkSession()
+        checkSession({ role: "admin" })
             .then((res) => {
                 if (res.message !== "PONG") {
                     window.location.href = clientURL;
