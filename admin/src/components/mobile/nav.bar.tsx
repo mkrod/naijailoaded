@@ -18,36 +18,34 @@ const MobileNavbar: FC<Props> = ({ children }): ReactNode => {
 
 
     return (
-        <div className={styles.container}>
-            <nav ref={navBarRef} className={`${styles.nav_container} ${isOpen ? styles.nav_open : ""}`}>
-                <NavBar
-                    isOpen={isOpen}
-                    setIsOpen={setIsOpen}
-                />
-            </nav>
-            <div className={styles.content_container}>
-                <header className={styles.header_container}>
-                    <div className={styles.bar_container}>
-                        <div
-                            onClick={() => setIsOpen(!isOpen)}
-                            className={`${styles.bars} ${isOpen ? styles.bars_active : ""}`}>
-                            <span />
-                            <span />
-                            <span />
-                        </div>
+        <div className={styles.content_container}>
+            <header ref={navBarRef} className={styles.header_container}>
+                <div className={styles.bar_container}>
+                    <div
+                        onClick={() => setIsOpen(!isOpen)}
+                        className={`${styles.bars} ${isOpen ? styles.bars_active : ""}`}>
+                        <span />
+                        <span />
+                        <span />
                     </div>
-                    <div className={styles.logo_container}>
-                        <img src={appLogo} className={styles.logo} alt='logo' />
-                        <div className={styles.app_name_container}>
-                            <span className={styles.naijai}>naijai</span>
-                            <span className={styles.loaded}>loaded</span>
-                        </div>
+                </div>
+                <div className={styles.logo_container}>
+                    <img src={appLogo} className={styles.logo} alt='logo' />
+                    <div className={styles.app_name_container}>
+                        <span className={styles.naijai}>naijai</span>
+                        <span className={styles.loaded}>loaded</span>
                     </div>
-                </header>
-                <main className={styles.content_container}>
-                    {children}
-                </main>
-            </div>
+                </div>
+                <nav className={`${styles.nav_container} ${isOpen ? styles.nav_open : ""}`}>
+                    <NavBar
+                        isOpen={isOpen}
+                        setIsOpen={setIsOpen}
+                    />
+                </nav>
+            </header>
+            <main className={styles.content_container}>
+                {children}
+            </main>
         </div>
     )
 }

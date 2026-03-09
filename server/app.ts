@@ -43,8 +43,8 @@ interface CorsOptions {
 const corsOptions: CorsOptions = {
     origin: function (origin, callback) {
         // LOG THIS to see what the browser is actually sending
-        console.log("Request Origin:", origin);
-        console.log("Allowed Origins:", allowedOrigins);
+        //console.log("Request Origin:", origin);
+        //console.log("Allowed Origins:", allowedOrigins);
 
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
@@ -75,6 +75,8 @@ import miscRoutes from "./routes/misc.routes.js";
 import deployRoutes from "./routes/misc.routes.js";
 
 
+import libraryRoutes from "./routes/media.library.routes.js";
+
 app.use("/api/posts", postRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/comments", commentsRoutes);
@@ -82,6 +84,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/misc", miscRoutes);
 app.use("/api/deploy", deployRoutes)
+
+app.use("/api/library", libraryRoutes)
 
 
 //////////////////// Static files ///////////////////

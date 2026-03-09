@@ -14,7 +14,8 @@ const NavBar: FC<Props> = ({ isOpen, setIsOpen }): ReactNode => {
 
     const { switchScheme, userScheme, isMobile } = useGlobalProvider();
     const mobileClass = isMobile ? "mobile_" : "";
-
+    const path = location.pathname;
+    const isActive = (nav: any) => nav.path === "/" ? path === "/" : path.startsWith(nav.path as string);
 
     return (
         <div className={styles.container}>
@@ -42,6 +43,7 @@ const NavBar: FC<Props> = ({ isOpen, setIsOpen }): ReactNode => {
             <nav className={styles.nav_container}>
                 {navLinks.map((link, index) => (
                     <NavLinker
+                        isActive={isActive(link)}
                         key={index}
                         link={link}
                         isOpen={isOpen}

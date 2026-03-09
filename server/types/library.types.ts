@@ -2,6 +2,27 @@ import { Response } from "express";
 import { AuthRequest } from "./auth.type.js";
 import { JwtTokenPayload, User } from "./user.types.js";
 
+export type LibraryTypes = "video" | "image" | "music";
+export type LibraryOrder = "newest" | "oldest";
+
+export interface MediaLibraryFilter {
+    page?: number;
+    limit: number;
+    library_type?: LibraryTypes;
+    order?: LibraryOrder;
+    name?: string;
+    cursorCreatedAt?: string;
+    cursorId?: string;
+}
+
+
+
+export interface MediaLibrary {
+    library_id: string;
+    library_url: string;
+    library_type: LibraryTypes;
+    created_at: string;
+}
 
 export interface Library {
     id?: number; // for ordering from mysql
@@ -9,6 +30,7 @@ export interface Library {
     library_url: string; // link to the library
     library_type: "music" | "video" | "image"
 }
+
 export interface CreateLibraryParams {
     /**
      * Express Request Object

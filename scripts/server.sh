@@ -1,3 +1,4 @@
+set -x
 #!/bin/bash
 export PATH=$PATH:/usr/local/bin:/usr/bin:/bin
 cd /var/www/nodejs/naijailoaded/server || exit 1

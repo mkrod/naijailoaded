@@ -12,6 +12,9 @@ import { theme } from "./constants/variables/global.vars";
 import CreatePost from "./pages/post.create";
 import Logout from "./pages/logout";
 import { UserProvider } from "./constants/providers/user.provider";
+import MediaLibrary from "./pages/library";
+import { MediaLibraryProvider } from "./constants/providers/media.library.provider";
+import ViewLibrary from "./pages/library.view";
 
 
 const App = () => {
@@ -23,6 +26,8 @@ const App = () => {
 
         <Route path="/posts" element={<Posts />} />
         <Route path="/posts/create" element={<CreatePost />} />
+        <Route path="/library" element={<MediaLibrary />} />
+        <Route path="/library/:id" element={<ViewLibrary />} />
         <Route path="/logout" element={<Logout />} />
 
       </Route>
@@ -35,7 +40,9 @@ const App = () => {
         <PostsProvider>
           <CategoriesProvider>
             <UserProvider>
-              <RouterProvider router={router} />
+              <MediaLibraryProvider>
+                <RouterProvider router={router} />
+              </MediaLibraryProvider>
             </UserProvider>
           </CategoriesProvider>
         </PostsProvider>

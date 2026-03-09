@@ -1,6 +1,7 @@
 import { type FC, useEffect, useRef, useState, useLayoutEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import styles from "./css/dropdown.module.css";
+import type { CSSProperties } from "@mui/material";
 
 export interface DropdownOption {
     label?: string;
@@ -22,12 +23,14 @@ interface DropdownProps {
     width?: string | number;
     openDirection?: "top" | "bottom";
     isSearchable?: boolean; // New: Toggle search feature
+    wrapperStyles?: CSSProperties;
+    triggerStyles?: CSSProperties;
 }
 
 const Dropdown: FC<DropdownProps> = ({
     options, value, defaultValue, placeholder = "Select",
     searchPlaceholder = "Search...", onChange, disabled = false,
-    fit, height, width, openDirection, isSearchable = true
+    fit, height, width, openDirection, isSearchable = true, wrapperStyles, triggerStyles
 }) => {
     const [open, setOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
@@ -119,10 +122,10 @@ const Dropdown: FC<DropdownProps> = ({
     return (
         <div
             ref={ref}
-            style={{ width: fit ? "100%" : width, height: fit ? "100%" : height }}
+            style={{ width: fit ? "100%" : width, height: fit ? "100%" : height, ...wrapperStyles }}
             className={`${styles.wrapper} ${disabled ? styles.disabled : ""} ${open ? styles.isOpen : ""}`}
         >
-            <div className={styles.trigger} onClick={toggle}>
+            <div className={styles.trigger} style={triggerStyles} onClick={toggle}>
                 {isSearchable && open ? (
                     <input
                         ref={searchRef}

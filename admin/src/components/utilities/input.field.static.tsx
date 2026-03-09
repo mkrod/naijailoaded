@@ -20,8 +20,9 @@ interface StaticInputFieldProps {
      * whether the box is transparent to use its parent background
      */
     labelStyle?: CSSProperties;
+    inputStyles?: CSSProperties;
 }
-const InputFieldStatic: React.FC<StaticInputFieldProps> = ({ ref, setValue, keyDown, value, label, type = "text", placeholder, style, disabled = false, autocomplete = 'on', labelStyle }): React.JSX.Element => {
+const InputFieldStatic: React.FC<StaticInputFieldProps> = ({ ref, setValue, keyDown, value, label, type = "text", placeholder, style, disabled = false, autocomplete = 'on', labelStyle, inputStyles }): React.JSX.Element => {
 
     const [textType, setTextType] = useState<"password" | "text">(type === "password" ? "password" : "text" as "password" | "text");
 
@@ -48,7 +49,7 @@ const InputFieldStatic: React.FC<StaticInputFieldProps> = ({ ref, setValue, keyD
                 placeholder={placeholder}
                 onKeyDown={keyDown}
                 autoComplete={autocomplete}
-                style={{ width: type === "password" ? "calc(100% - 2rem)" : "100%" }}
+                style={{ width: type === "password" ? "calc(100% - 2rem)" : "100%", ...inputStyles }}
             />
 
             {type === "password" && (

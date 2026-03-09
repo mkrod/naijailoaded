@@ -11,10 +11,9 @@ export default function Document() {
         <link rel="icon" href={appLogo} type="image/png" />
         <link rel="apple-touch-icon" href={appLogo} />
 
-        {/* REMOVED: Manual TTF Preload. 
-            This was triggering the "not used within a few seconds" warning 
-            and blocking the main thread.
-        */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Bungee&family=Lilita+One&family=Playpen+Sans:wght@100..800&family=Quicksand:wght@300..700&family=Rye&family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
 
         {/* Basic SEO */}
         <meta name="description" content={siteDescription} />
@@ -23,11 +22,11 @@ export default function Document() {
         <meta name="robots" content="index, follow" />
 
         {/* OpenGraph */}
-        <meta property="og:title" content={siteName} />
+        {/* <meta property="og:title" content={siteName} />
         <meta property="og:description" content={siteDescription} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={siteURL} />
-        <meta property="og:image" content="/og-image.png" />
+        <meta property="og:image" content="/og-image.png" />*/}
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
