@@ -136,7 +136,7 @@ if (isProd) {
     // --- ADDED TIMEOUT SETTINGS ---
     server.timeout = MAX_TIMEOUT;
     server.headersTimeout = MAX_TIMEOUT + 1000; // Must be slightly higher than timeout
-    server.keepAliveTimeout = 65000; // Ensure this is higher than Apache's keepalive
+    server.keepAliveTimeout = MAX_TIMEOUT + 10000; // Ensure this is higher than Apache's keepalive
 } else {
     // Local Development: HTTPS
     const sslOptions = {

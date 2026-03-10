@@ -9,7 +9,7 @@ SCRIPTS_DIR="$BASE_DIR/scripts"
 cd "$BASE_DIR" || { echo "Directory $BASE_DIR not found"; exit 1; }
 
 echo ">>> SYNCING WITH GITHUB <<<"
-git fetch --all
+git pull
 git reset --hard origin/main
 
 # Run segments
