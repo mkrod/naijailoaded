@@ -1,6 +1,3 @@
-"use  client"
-
-
 import type { APIArrayResponse, colorScheme, Response } from "../types/global.types";
 import { createTheme } from "@mui/material";
 import type { Post } from "../types/post.type";

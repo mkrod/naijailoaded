@@ -120,7 +120,7 @@ const PostTextUpdater: FC<Props> = ({ post, updatePost, error, albumList = [] })
                     CantUseCase='Title and artist is Required'
                     error={(e) => error(e)}
                     prompt={(post.title?.trim() && post.artist?.displayName?.trim()) ? `
-                        - Give me a short-length content description for ${post.title} by ${post.artist.displayName}.
+                        - Give me a short-length content description for ${post.title} ${post.artist.displayName ? `by ${post.artist?.displayName}` : ""} ${post.content_type ? `in context of ${post.content_type}` : ""}.
                             Requirements:
                         - Output HTML only (no Markdown, no explanations)
                         - Use <strong>, <em>, <u>, <p>, <br/>, <ul>, <li> where appropriate
