@@ -53,14 +53,21 @@ export const validatePost = (post: Partial<Post>): ValidationResult => {
     }
 
     // Content
-    if (!Array.isArray(post.content)) {
+    if (!Boolean(post.is_album) && !Array.isArray(post.content)) {
         return { error: true, message: "Content must be an array" };
+
     }
 
-    for (const item of post.content) {
-        if (!item.id) return { error: true, message: "content.id is required" };
-        if (!item.url) return { error: true, message: "content.url is required" };
+    if (!Boolean(post.is_album) && Array.isArray(post.content)) {
+        for (const item of post.content) {
+            if (!item.id) return { error: true, message: "content.id is required" };
+            if (!item.url) return { error: true, message: "content.url is required" };
+        }
+
     }
+
+
+
 
     // Thumbnail
     if (!Array.isArray(post.content_thumbnail) || post.content_thumbnail.length === 0) {
