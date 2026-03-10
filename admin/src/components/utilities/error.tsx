@@ -7,7 +7,6 @@ import {
 import { useGlobalProvider } from '../../constants/providers/global.provider';
 // Note: We are using native useNavigate instead of the custom useRouter 
 // to avoid the context error you encountered.
-import { cachePath } from '../../constants/variables/global.vars';
 import styles from "./css/error.module.css";
 
 const ErrorScreen: FC = () => {
@@ -50,8 +49,9 @@ const ErrorScreen: FC = () => {
     };
   }, [error]);
 
-  const handleRetry = () => {
-    const path = cachePath(window.location.pathname);
+  const handleHome = () => {
+    const path = "/";
+    localStorage.removeItem("last_page");
     if (navigate) {
       navigate(path, { replace: true });
     } else {
@@ -61,6 +61,7 @@ const ErrorScreen: FC = () => {
 
   const handleBack = () => {
     if (navigate) {
+      localStorage.removeItem("last_page");
       navigate(-1);
     } else {
       window.history.back();
@@ -88,8 +89,8 @@ const ErrorScreen: FC = () => {
         <button onClick={handleBack} className={styles.error_button}>
           Back
         </button>
-        <button onClick={handleRetry} className={`${styles.error_button} ${styles.retry}`}>
-          Try again
+        <button onClick={handleHome} className={`${styles.error_button} ${styles.retry}`}>
+          Home
         </button>
       </div>
     </div>

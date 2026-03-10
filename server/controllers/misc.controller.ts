@@ -3,7 +3,7 @@ import { Response as CustomResponse } from "./../types/global.types.js"
 import { AuthRequest } from "../types/auth.type.js";
 import OpenAI from "openai";
 import ffmpeg from "fluent-ffmpeg";
-import { spawnSync } from "child_process";
+import { spawnSync, spawn } from "child_process";
 import { Readable } from "stream";
 import path from "path";
 import fs, { stat } from "fs";
@@ -152,6 +152,168 @@ export const brandVideo = async (req: AuthRequest, res: Response) => {
 
 
 
+
+
+// --- ASYNC HELPERS ---
+
+const getDuration = (filePath: string): Promise<number> => {
+    return new Promise((resolve) => {
+        const probe = spawn("ffprobe", [
+            "-v", "error",
+            "-show_entries", "format=duration",
+            "-of", "default=noprint_wrappers=1:nokey=1",
+            filePath
+        ]);
+
+        let output = "";
+        probe.stdout.on("data", (data) => (output += data));
+        probe.on("close", () => {
+            const duration = parseFloat(output || "0");
+            resolve(isNaN(duration) ? 0 : duration);
+        });
+    });
+};
+
+const runFFmpeg = (args: string[]): Promise<void> => {
+    return new Promise((resolve, reject) => {
+        // We prepend 'nice' to the command to lower CPU priority.
+        // This helps prevent the OS from killing the process for 'CPU hogging' (Error 152).
+        const ffmpeg = spawn("nice", ["-n", "10", "ffmpeg", ...args]);
+
+        ffmpeg.stderr.on("data", (data) => {
+            const line = data.toString().split('\n')[0];
+            if (line.includes("size=")) console.log(`FFmpeg Progress: ${line}`);
+        });
+
+        ffmpeg.on("close", (code) => {
+            // Some environments return 152 but the file is actually fine.
+            // We'll treat 0 as success.
+            if (code === 0) resolve();
+            else reject(new Error(`FFmpeg exited with code ${code}`));
+        });
+
+        ffmpeg.on("error", (err) => reject(err));
+    });
+};
+
+// --- MAIN CONTROLLER ---
+
+export const brandMusic = async (req: AuthRequest, res: Response) => {
+    const file = req.file as Express.Multer.File;
+    const { title, artist, album, genre, description, producer, watermark, link } = req.body;
+
+    const uploadDir = UPLOAD_DIR;
+    const library_id = uuidv4();
+    const coverPath = path.join(ASSETS_DIR, "nl_watermark_music.jpg");
+    const jinglePath = "https://naijailoaded.com.ng/wp-content/uploads/2024/09/More-music-at-Naijailoaded.ng-jingle.mp3";
+
+    const uniqueName = `branded-${library_id}-${Date.now()}.mp3`;
+    const outputPath = path.join(uploadDir, uniqueName);
+    const serverPort = isProd ? "" : process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
+    const serverURI = process.env.SERVER_URL ? `${process.env.SERVER_URL}${serverPort}` : "";
+    const publicUrl = `${serverURI}${uploadPath}/${uniqueName}`;
+
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+
+    let inputSource: string | null = null;
+
+    try {
+        console.log("Stage 1: Preparing source file...");
+        inputSource = file ? file.path : await downloadFile(link, TEMP_DIR);
+
+        if (!inputSource || !fs.existsSync(inputSource)) {
+            return res.status(400).send({ message: "No file or link provided" });
+        }
+
+        const clean = (val: any) => val ? String(val).replace(/[^\w\s-]/g, "").trim() : "";
+
+        const mainDur = await getDuration(inputSource);
+        const jingleDur = 4;
+
+        const posStart = 3000;
+        const posMid = Math.floor((mainDur / 2) * 1000);
+        const posEnd = Math.floor(Math.max(0, (mainDur - jingleDur - 1)) * 1000);
+
+        let args: string[] = ["-y"];
+
+        if (watermark === "true" && fs.existsSync(coverPath)) {
+            args.push(
+                "-i", inputSource,
+                "-i", jinglePath,
+                "-i", coverPath,
+                "-filter_complex",
+                `[0:a]volume=0.7[main];` +
+                `[1:a]volume=1.0,asplit=3[j1][j2][j3];` +
+                `[j1]adelay=${posStart}|${posStart}[a1];` +
+                `[j2]adelay=${posMid}|${posMid}[a2];` +
+                `[j3]adelay=${posEnd}|${posEnd}[a3];` +
+                `[main][a1][a2][a3]amix=inputs=4:weights=1 1 1 1:dropout_transition=0[outa]`,
+                "-map", "[outa]",
+                "-map", "2:v",
+                "-c:a", "libmp3lame",
+                "-b:a", "128k" // Lowering bitrate slightly for 1hr+ files reduces CPU load
+            );
+        } else {
+            args.push(
+                "-i", inputSource,
+                "-i", coverPath,
+                "-map", "0:a",
+                "-map", "1:v",
+                "-c:a", "copy"
+            );
+        }
+
+        args.push(
+            "-preset", "ultrafast",
+            "-threads", "1", // Limit to 1 thread to avoid triggering CPU hogging limits
+            "-c:v", "mjpeg",
+            "-disposition:v:0", "attached_pic",
+            "-id3v2_version", "3",
+            "-metadata", `title=${clean(title) || 'NaijaLoaded'}`,
+            "-metadata", `artist=${clean(artist) || 'NaijaLoaded'}`,
+            "-metadata", `album=${clean(album) || 'NaijaLoaded Hits'}`,
+            "-metadata", `genre=${clean(genre) || 'Afrobeats'}`,
+            "-metadata", `comment=${clean(description) || 'NaijaLoaded.com'}`,
+            "-metadata", `composer=${clean(producer) || 'NaijaLoaded'}`,
+            outputPath
+        );
+
+        console.log("Stage 2: Running FFmpeg branding...");
+        await runFFmpeg(args);
+
+        const metadata = await parseFile(outputPath);
+        console.log(`✅ Success: ${metadata.common.title || 'NaijaLoaded'}`);
+
+        const data: CreateLibraryPayload = {
+            user: req.user,
+            libraries: [{ library_id, library_url: publicUrl, library_type: "music" }],
+        };
+
+        const dbResult = await createLibrary({ local: true, data }) as CustomResponse;
+
+        if (dbResult?.status === 201) {
+            return res.status(201).json({
+                status: 201,
+                message: dbResult.message,
+                data: { id: library_id, url: publicUrl }
+            });
+        } else {
+            return res.status(dbResult?.status || 500).json({ message: dbResult?.message });
+        }
+
+    } catch (error: any) {
+        console.error("❌ Branding Failed:", error);
+        return res.status(500).send({ message: "Processing failed.", error: error.message });
+    } finally {
+        if (inputSource && fs.existsSync(inputSource)) {
+            try { fs.unlinkSync(inputSource); } catch (e) { /* ignore */ }
+        }
+    }
+};
+
+//OLD//
+/*
+this setup doesn't work if the audio file is large 
 
 
 const getDuration = (filePath: string): number => {
@@ -315,7 +477,7 @@ export const brandMusic = async (req: AuthRequest, res: Response) => {
     }
 
 };
-
+*/
 
 export const brandImage = async (req: AuthRequest, res: Response) => {
     const file = (req as any).file as Express.Multer.File;

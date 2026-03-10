@@ -161,7 +161,7 @@ const HomeCarousel: FC<Props> = ({
                                         {getTypeIcon(item?.content_type?.toLowerCase() as Post['content_type'])}
                                     </div>
                                     <span className={styles.meta_type_text}>
-                                        {`${item.content_type} ${item.category_id ? " - " + item.category_id : ""}`}
+                                        {`${item.content_type} ${item.category_id ? " - " + item.category_id.replaceAll("-", " ") : ""}`}
                                     </span>
                                 </div>
                                 <h1
