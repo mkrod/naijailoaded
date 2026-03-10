@@ -5,5 +5,5 @@ PNPM_BIN="/root/.nvm/versions/node/v22.16.0/bin/pnpm"
 
 cd /var/www/nodejs/naijailoaded/client || exit 1
 $PNPM_BIN install && $PNPM_BIN run build
-pm2 delete NL_CLIENT 2>/dev/null || true
-pm2 start $PNPM_BIN --name "NL_CLIENT" -- start
+# Restart ensures the new build is picked up without losing the PM2 process link
+pm2 restart NL_CLIENT || pm2 start $PNPM_BIN --name "NL_CLIENT" -- start

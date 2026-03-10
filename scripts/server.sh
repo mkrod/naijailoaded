@@ -5,5 +5,6 @@ PNPM_PATH=$(which pnpm)
 
 cd /var/www/nodejs/naijailoaded/server || exit 1
 $PNPM_PATH install && $PNPM_PATH run build
-pm2 delete NL_SERVER 2>/dev/null || true
-pm2 start $PNPM_PATH --name "NL_SERVER" -- start --update-env
+# Restart instead of delete to prevent script termination
+pm2 restart NL_SERVER --update-env || pm2 start $PNPM_PATH --name "NL_SERVER" -- start
+sleep 5 # Wait for API to be ready for the client build
