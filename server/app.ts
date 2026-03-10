@@ -124,11 +124,19 @@ const PORT: number = process.env.PORT ? parseInt(process.env.PORT) : 3500;
 const isProd = process.env.NODE_ENV === "production";
 
 
+// 20 minutes in milliseconds
+const MAX_TIMEOUT = 1200000;
+
 if (isProd) {
-    // Production: Standard HTTP (Nginx handles SSL)
-    app.listen(PORT, "0.0.0.0", () => {
+    // Production: Standard HTTP (Apache handles SSL)
+    const server = app.listen(PORT, "0.0.0.0", () => {
         console.log(`Production Server running on port ${PORT}`);
     });
+
+    // --- ADDED TIMEOUT SETTINGS ---
+    server.timeout = MAX_TIMEOUT;
+    server.headersTimeout = MAX_TIMEOUT + 1000; // Must be slightly higher than timeout
+    server.keepAliveTimeout = 65000; // Ensure this is higher than Apache's keepalive
 } else {
     // Local Development: HTTPS
     const sslOptions = {

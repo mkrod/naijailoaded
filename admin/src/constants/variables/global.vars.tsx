@@ -190,6 +190,8 @@ export const serverRequestWithProgress = async (
         }
 
         xhr.open(method.toUpperCase(), url, true);
+
+        xhr.timeout = 1200000;
         xhr.withCredentials = true;
 
         // Set Headers
@@ -221,6 +223,11 @@ export const serverRequestWithProgress = async (
                 const errorResponse = xhr.response;
                 reject(new Error(errorResponse?.message || xhr.statusText));
             }
+        };
+
+        // --- HANDLE TIMEOUT ERROR ---
+        xhr.ontimeout = () => {
+            reject(new Error("The request timed out. The processing took too long."));
         };
 
         xhr.onerror = () => reject(new Error("Network Error"));

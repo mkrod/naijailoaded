@@ -14,9 +14,10 @@ git reset --hard origin/main
 
 # Run segments
 # Using 'source' or 'bash' keeps things isolated
+bash "$SCRIPTS_DIR/admin.sh"
 bash "$SCRIPTS_DIR/server.sh"
 bash "$SCRIPTS_DIR/client.sh"
-bash "$SCRIPTS_DIR/admin.sh"
+
 
 echo ">>> ALL SEGMENTS FINISHED <<<"
 pm2 status
