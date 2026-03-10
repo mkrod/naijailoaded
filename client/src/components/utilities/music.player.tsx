@@ -166,64 +166,66 @@ const MusicPlayer: FC<Props> = ({ thumbnail, data, totalTrack = 1, activeTrack =
                     <span className={styles.title}>{title}</span>
                     <span className={styles.artist}>{artistName}</span>
                 </div>
-                <div className={styles.player_control}>
-                    <div className={styles.track_container}>
-                        <input
-                            min={0}
-                            max={100}
-                            step={1}
-                            value={progress}
-                            onChange={handleSeek}
-                            type="range"
-                            className={styles.track}
-                        />
-                        <div className={styles.track_label}>
-                            <span>{elapsed}</span>
-                            <span>{formatTime(duration)}</span>
+                {totalTrack > 0 ? (
+                    <div className={styles.player_control}>
+                        <div className={styles.track_container}>
+                            <input
+                                min={0}
+                                max={100}
+                                step={1}
+                                value={progress}
+                                onChange={handleSeek}
+                                type="range"
+                                className={styles.track}
+                            />
+                            <div className={styles.track_label}>
+                                <span>{elapsed}</span>
+                                <span>{formatTime(duration)}</span>
+                            </div>
+                        </div>
+                        <div className={styles.controllers}>
+                            {totalTrack > 1 && (
+                                <button
+                                    disabled={cantPrev}
+                                    className={styles.control_button}
+                                    onClick={() => {
+                                        // If activeTrack is 0, we can't go back
+                                        if (!cantPrev) setTrack?.(activeTrack - 1);
+                                    }}
+                                >
+                                    <IoPlaySkipBack size={20} color={cantPrev ? "#3a3a3a" : "whitesmoke"} />
+                                </button>
+                            )}
+                            {playingState !== "playing" ? (
+                                <button
+                                    onClick={togglePlay}
+                                    className={styles.control_button}
+                                >
+                                    <IoPlay size={20} color={"whitesmoke"} />
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={togglePlay}
+                                    className={styles.control_button}
+                                >
+                                    <IoPause size={20} color={"whitesmoke"} />
+                                </button>
+                            )}
+                            {totalTrack > 1 && (
+                                <button
+                                    disabled={cantNext}
+                                    className={styles.control_button}
+                                    onClick={() => {
+                                        // If activeTrack is totalTrack - 1, we can't go forward
+                                        if (!cantNext) setTrack?.(activeTrack + 1);
+                                    }}
+                                >
+                                    <IoPlaySkipForward size={20} color={cantNext ? "#3a3a3a" : "whitesmoke"} />
+                                </button>
+                            )}
                         </div>
                     </div>
-                    <div className={styles.controllers}>
-                        {totalTrack > 1 && (
-                            <button
-                                disabled={cantPrev}
-                                className={styles.control_button}
-                                onClick={() => {
-                                    // If activeTrack is 0, we can't go back
-                                    if (!cantPrev) setTrack?.(activeTrack - 1);
-                                }}
-                            >
-                                <IoPlaySkipBack size={20} color={cantPrev ? "#3a3a3a" : "whitesmoke"} />
-                            </button>
-                        )}
-                        {playingState !== "playing" ? (
-                            <button
-                                onClick={togglePlay}
-                                className={styles.control_button}
-                            >
-                                <IoPlay size={20} color={"whitesmoke"} />
-                            </button>
-                        ) : (
-                            <button
-                                onClick={togglePlay}
-                                className={styles.control_button}
-                            >
-                                <IoPause size={20} color={"whitesmoke"} />
-                            </button>
-                        )}
-                        {totalTrack > 1 && (
-                            <button
-                                disabled={cantNext}
-                                className={styles.control_button}
-                                onClick={() => {
-                                    // If activeTrack is totalTrack - 1, we can't go forward
-                                    if (!cantNext) setTrack?.(activeTrack + 1);
-                                }}
-                            >
-                                <IoPlaySkipForward size={20} color={cantNext ? "#3a3a3a" : "whitesmoke"} />
-                            </button>
-                        )}
-                    </div>
-                </div>
+                ) : null}
             </div>
         )
 }
