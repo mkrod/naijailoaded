@@ -367,23 +367,31 @@ export const getSpecificPost = async (req: AuthRequest, res: Response) => {
         const status = req.user?.role !== "admin" ? "active" : undefined;
 
 
-        const sql = `
-            SELECT 
-                p.*, 
-                u.user_id as author_user_id, 
-                u.username as author_username,
-                (
-                    SELECT JSON_ARRAYAGG(c.content)
-                    FROM posts c
-                    WHERE c.parent_id = p.post_id
-                ) as aggregated_child_content
-            FROM posts p
-            LEFT JOIN users u ON p.author_id = u.user_id
-            WHERE p.slug = ? AND p.status = ?
-            LIMIT 1
+        let sql = `
+        SELECT 
+            p.*, 
+            u.user_id as author_user_id, 
+            u.username as author_username,
+            (
+                SELECT JSON_ARRAYAGG(c.content)
+                FROM posts c
+                WHERE c.parent_id = p.post_id
+            ) as aggregated_child_content
+        FROM posts p
+        LEFT JOIN users u ON p.author_id = u.user_id
+        WHERE p.slug = ?
         `;
 
-        const [result]: [any[], any] = await db.query(sql, [slug, status]);
+        const values: any[] = [slug];
+
+        if (req.user?.role !== "admin") {
+            sql += " AND p.status = ?";
+            values.push("active");
+        }
+
+        sql += " LIMIT 1";
+
+        const [result]: [any[], any] = await db.query(sql, values);
         const data = result[0];
 
         if (!data) {
