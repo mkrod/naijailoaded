@@ -172,6 +172,13 @@
     color: #bf1111;
 }
 
+.draft {
+    color: #040499;
+}
+
+.private {
+    color: #989b01;
+}
 
 .actions_container {
     display: flex;
