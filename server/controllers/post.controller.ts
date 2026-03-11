@@ -8,11 +8,11 @@ export const getPosts = async (req: AuthRequest, res: Response) => {
     try {
         const q = req.query as Record<string, string | undefined>;
         // --- Build filter object ---
-        const filter: PostFilter = {
+        const filter = {
             limit: q.limit ? Math.min(Number(q.limit), 200) : 20,
             order: "newest",
-            status: req.user?.role !== "admin" ? "active" : ""
-        };
+            status: req.user?.role !== "admin" ? "active" : undefined
+        } as PostFilter;
 
         if (q.title) filter.title = q.title;
         if (q.category_id) filter.category_id = q.category_id;
