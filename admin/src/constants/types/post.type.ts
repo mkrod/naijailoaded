@@ -64,7 +64,7 @@ export interface PostSQLResult {
      */
     content_type: 'video' | 'music' | 'news' | 'others';
 
-    status: "active" | "inactive" | "disabled" | "draft";
+    status: "active" | "inactive" | "disabled" | "draft" | "private";
     /**
     * whether post comment section is open
     * 1  or 0 tinytint use Boolean() to convert to js boolean

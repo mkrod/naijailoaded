@@ -67,6 +67,13 @@ const PostOthersUpdater: FC<Props> = ({ tagMeta, updateTagMeta, tagMedia, update
                         />
                         <span>Draft</span>
                     </div>
+                    <div className={styles.radio_container}>
+                        <Radio
+                            checked={post?.status === "private"}
+                            onChange={() => updatePost({ status: "private" })}
+                        />
+                        <span>Private</span>
+                    </div>
                     {post.post_id && (
                         <div className={styles.radio_container}>
                             <Radio
