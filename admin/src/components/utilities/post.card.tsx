@@ -8,6 +8,8 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { useGlobalProvider } from '@/constants/providers/global.provider';
 import { useRouter } from '@/constants/utilities/useRouter';
 import useClickOutside from '@/constants/utilities/useOutsideClick';
+import { deletePosts } from '@/constants/controllers/posts.controller';
+import { usePostProvider } from '@/constants/providers/posts.provider';
 
 
 interface Props {
@@ -34,11 +36,13 @@ const PostCard: FC<Props> = ({ isSelected, data, sn, openedAction, setOpenedActi
     const [updatedAt, setUpdatedAt] = useState<string>("Loading...");
 
 
-    const { setPrompt, snackNoteSetter } = useGlobalProvider();
+    const { setPrompt, setNote, snackNoteSetter } = useGlobalProvider();
 
     const actionsRef = useRef<HTMLDivElement>(null); // dropdown container ref
 
     const closeAction = () => setOpenedAction("");
+
+    const { setFetchingPosts } = usePostProvider();
 
     const openDirection: "top" | "bottom" = ((Number(sn) ?? 1) <= 3 ? "bottom" : "top");
 
@@ -84,11 +88,26 @@ const PostCard: FC<Props> = ({ isSelected, data, sn, openedAction, setOpenedActi
     }, [data.title, data.content_thumbnail]);
 
 
-    const deletePost = useCallback(async ({ productsId }: { productsId: string[] }) => {
+
+    const [isDeletingPost, setIsDeletingPost] = useState<boolean>(false);
+    const deletePost = useCallback(async (data: { post_ids: string[] }) => {
         // Implement delete logic here, e.g., call an API to delete the post
-        console.log("Deleting post with ID:", productsId);
-        // After deletion, you might want to refresh the list or show a success message
-        snackNoteSetter({ message: "Post deleted successfully" });
+        if (isDeletingPost) return;
+        try {
+            setIsDeletingPost(true);
+
+            const response = await deletePosts(data);
+            if (response.status !== 200) throw Error("Delete failed!.");
+            //clean up
+            setFetchingPosts(true); //refresh posts list;
+            setNote({ type: "success", title: "Post deleted successfully" })
+
+        } catch (err) {
+            console.log("Failed too delete Post: ", (err as any).message);
+            setNote({ type: "error", title: "Failed too delete Post" });
+        } finally {
+            setIsDeletingPost(false)
+        }
     }, []);
 
 
@@ -169,7 +188,7 @@ const PostCard: FC<Props> = ({ isSelected, data, sn, openedAction, setOpenedActi
                                 title: `Delete Item`,
                                 description: `Are you sure you want to delete ${data.title}?, Consider Un-publishing instead...`,
                                 onAccept: () => {
-                                    deletePost({ productsId: [data.post_id] });
+                                    deletePost({ post_ids: [data.post_id] });
                                     closeAction();
                                 },
                                 onDecline() {
@@ -180,9 +199,11 @@ const PostCard: FC<Props> = ({ isSelected, data, sn, openedAction, setOpenedActi
                     >
                         Delete
                     </span>
+                    {/*
                     <span className={styles.action_option}>
                         {data.status === "active" ? "Unpublish" : "Publish"}
                     </span>
+                    */}
                 </div>
             </div>
         </div>

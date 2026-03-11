@@ -14,7 +14,7 @@ import { BsFileEarmarkPlay } from 'react-icons/bs';
 import { RiDeleteBin5Fill } from 'react-icons/ri';
 import EditableInput from './input';
 import { useGlobalProvider } from '@/constants/providers/global.provider';
-import { brandMusic, brandVideo } from '@/constants/controllers/misc.controller';
+import { brandImage, brandMusic, brandVideo } from '@/constants/controllers/misc.controller';
 
 interface Props {
     index: number;
@@ -78,7 +78,7 @@ const ContentUploader: FC<Props> = ({ tagMedia, tagMeta, index, allContents, pos
                 ? await brandVideo(formData)
                 : type === "music"
                     ? await brandMusic(formData)
-                    : null;
+                    : await brandImage(formData);
 
             // 4. Update State with the Response Object
             if (response) {

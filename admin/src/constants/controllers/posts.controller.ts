@@ -17,3 +17,8 @@ export const createPost = async (data: Partial<CreatePostFormState>, onProgress?
     const response: Response = await serverRequestWithProgress("put", "/posts", data, "json", "json", onProgress);
     return response;
 }
+
+export const deletePosts = async (data: { post_ids: string[] }) => {
+    const response: Response = await serverRequest("delete", "/posts/", data, "json");
+    return response;
+}

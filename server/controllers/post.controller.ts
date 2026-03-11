@@ -492,3 +492,24 @@ export const addPost = async (req: AuthRequest, res: Response) => {
         return res.status(500).json({ message: "cannot modify or create post" });
     }
 }
+
+
+export const deletePost = async (req: AuthRequest, res: Response) => {
+    try {
+        const { post_ids } = req.body as { post_ids: string[] };
+
+        if (!post_ids || !Array.isArray(post_ids) || post_ids.length === 0) {
+            return res.status(400).json({ message: "Select at least one post!" });
+        }
+
+        // mysql2 requires the array to be inside another array for the IN clause
+        // Note the parentheses: IN (?)
+        await db.query("DELETE FROM posts WHERE post_id IN (?)", [post_ids]);
+
+        return res.status(200).json({ status: 200, message: "Deleted successfully" });
+
+    } catch (err) {
+        console.error("Error Deleting Post: ", (err as any).message);
+        return res.status(500).json({ status: 500, message: "Internal server error" });
+    }
+}

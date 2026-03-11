@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FC, type ReactNode, type RefObject } from 'react'
+import { useCallback, useEffect, useRef, useState, type FC, type ReactNode, type RefObject } from 'react'
 import styles from "./css/post.module.css";
 import { useGlobalProvider } from '@/constants/providers/global.provider';
 import Dropdown from '@/components/utilities/dropdown';
@@ -14,6 +14,8 @@ import PostCard from '@/components/utilities/post.card';
 import useClickOutside from '@/constants/utilities/useOutsideClick';
 import { MdOutlineDatasetLinked } from 'react-icons/md';
 import PageScrapper from '@/components/utilities/scrapper';
+import { deletePosts } from '@/constants/controllers/posts.controller';
+
 
 
 const Posts: FC = (): ReactNode => {
@@ -69,6 +71,28 @@ const Posts: FC = (): ReactNode => {
     /*=======================================*/
     const [isOpenScrapper, setIsOpenScrapper] = useState<boolean>(false);
 
+    const [isDeletingPost, setIsDeletingPost] = useState<boolean>(false);
+    const handleDeletePosts = useCallback(async () => {
+        if (selectedPostsId.length === 0) return;
+        if (isDeletingPost) return;
+
+        try {
+            setIsDeletingPost(true);
+
+            const response = await deletePosts({ post_ids: selectedPostsId });
+            if (response.status !== 200) throw Error("Delete failed!.");
+            //clean up
+            setFetchingPosts(true); //refresh posts list;
+            setSelectedPostsId([]);
+            setNote({ type: "success", title: "Post deleted successfully" })
+
+        } catch (err) {
+            console.log("Failed too delete Post: ", (err as any).message);
+            setNote({ type: "error", title: "Failed too delete Post" });
+        } finally {
+            setIsDeletingPost(false);
+        }
+    }, [selectedPostsId]);
 
     return (
         <div className={styles[`${mobileClass}container`]}>
@@ -113,7 +137,12 @@ const Posts: FC = (): ReactNode => {
                     />
                     {selectedPostsId.length > 0 && (
                         <section className={styles[`${mobileClass}action_container`]}>
-
+                            <button
+                                className={`${styles.action_button} ${styles.delete_button}`}
+                                onClick={handleDeletePosts}
+                            >
+                                Delete
+                            </button>
                         </section>
                     )}
                     <div className={styles[`${mobileClass}search_container`]}>

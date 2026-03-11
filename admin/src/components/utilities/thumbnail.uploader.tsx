@@ -8,6 +8,7 @@ import type { Post, Thumbnail } from '@/constants/types/post.type';
 import InputFieldStatic from './input.field.static';
 import { brandImage } from '@/constants/controllers/misc.controller';
 import { useGlobalProvider } from '@/constants/providers/global.provider';
+import { validateMediaLink } from '@/constants/variables/global.vars';
 
 interface Props {
     //thumbnailPreview: string | null;
@@ -122,9 +123,7 @@ const ThumbnailUploader: FC<Props> = ({ updatePost, postThumbnail, /*thumbnailPr
                         </div>
                     </div>
                     {processingMedia && (
-                        <div className={styles.upload_progress}
-
-                        />
+                        <div className={styles.upload_progress} />
                     )}
                 </div>
                 <span className={styles.media_uploader_header_sub_label}>
@@ -145,8 +144,12 @@ const ThumbnailUploader: FC<Props> = ({ updatePost, postThumbnail, /*thumbnailPr
                     <InputFieldStatic
                         value={postThumbnail ?? ""}
                         placeholder='Enter Thumbnail Link'
-                        setValue={(e) => {
-                            updatePost({ content_thumbnail: [{ id: "1", url: e } as Thumbnail] });
+                        setValue={(link) => {
+                            updatePost({ content_thumbnail: [{ id: "1", url: link } as Thumbnail] });
+
+                            if (validateMediaLink(link, "image")) {
+                                handleModifyMedia({ link })
+                            }
                         }}
                     />
                 </div>
