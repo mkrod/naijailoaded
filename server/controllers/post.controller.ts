@@ -14,6 +14,7 @@ export const getPosts = async (req: AuthRequest, res: Response) => {
             status: req.user?.role !== "admin" ? "active" : undefined
         } as PostFilter;
 
+        console.log("User in GetPost", req.user);
         if (q.title) filter.title = q.title;
         if (q.category_id) filter.category_id = q.category_id;
         if (q.content_type) filter.content_type = q.content_type;
