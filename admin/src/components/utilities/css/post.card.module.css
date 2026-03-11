@@ -169,7 +169,7 @@
 }
 
 .inactive {
-    color: #bf1111;
+    color: #de6b00;
 }
 
 .draft {
@@ -178,6 +178,10 @@
 
 .private {
     color: #86009e;
+}
+
+.disabled {
+    color: #bf1111;
 }
 
 .actions_container {

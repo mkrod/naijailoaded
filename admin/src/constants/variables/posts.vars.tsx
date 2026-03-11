@@ -47,7 +47,7 @@ export const validatePost = (post: Partial<Post>): ValidationResult => {
     }*/
 
     // Status
-    const validStatus = ["active", "inactive", "disabled", "draft"];
+    const validStatus = ["active", "inactive", "disabled", "draft", "private"];
     if (!post.status || !validStatus.includes(post.status)) {
         return { error: true, message: "invalid post status" };
     }
