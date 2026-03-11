@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useReducer, useState, type FC } from 'react';
+import { useCallback, useEffect, useReducer, useState, type FC, useMemo } from 'react';
 import Head from 'next/head';
-import styles from "./css/news.view.module.css";
+import styles from "./css/others.view.module.css"; // Consider renaming this css file eventually
 import DOMPurify from 'isomorphic-dompurify';
 
 // Providers & Controllers
@@ -19,7 +19,7 @@ import { siteName, clientURL, DefaultAPIArrayResponse, formatDate } from '@/cons
 import { Comment } from '@/constants/types/comments.types';
 import { GetServerSideProps } from 'next';
 import { getPost, getPosts } from '@/constants/controllers/posts.controller';
-import { APIArrayResponse, Response } from '@/constants/types/global.types';
+import { APIArrayResponse } from '@/constants/types/global.types';
 import Share from '@/components/utilities/share';
 import HorizontalCard from '@/components/utilities/horizontal.card';
 import ImageViewer from '@/components/utilities/viewable_image';
@@ -53,13 +53,20 @@ interface Props {
     similarPosts: APIArrayResponse;
 }
 
-const NewsView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
+const OthersView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
     const { isMobile, setNote } = useGlobalProvider();
     const [state, setState] = useReducer(reducer, initialState);
     const [createdAt, setCreatedAt] = useState<string | null>(null);
 
     const mobileClass = isMobile ? "mobile_" : "";
-    const thumbnailObj = typeof data.content_thumbnail === "string" ? (JSON.parse(data.content_thumbnail ?? "[]") as Thumbnail[])[0] : data.content_thumbnail?.[0];
+
+    // Safety check for thumbnail
+    const thumbnailObj = useMemo(() => {
+        if (!data.content_thumbnail) return null;
+        return typeof data.content_thumbnail === "string"
+            ? (JSON.parse(data.content_thumbnail ?? "[]") as Thumbnail[])[0]
+            : (data.content_thumbnail as Thumbnail[])?.[0];
+    }, [data.content_thumbnail]);
 
     const fetchComments = useCallback(async () => {
         try {
@@ -76,19 +83,19 @@ const NewsView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
         setCreatedAt(formatDate(data.created_at));
     }, [fetchComments, data.created_at]);
 
-    // --- NEWS SEO OPTIMIZATION ---
-    const seoTitle = `${data.title} | News & Updates | ${siteName}`;
-    const seoDesc = data.title; // Keep it clean for news
+    // --- SEO OPTIMIZATION ---
+    const seoTitle = `${data.title} | ${siteName}`;
+    const seoDesc = data.title;
 
     const jsonLd = {
         "@context": "https://schema.org",
-        "@type": "NewsArticle",
+        "@type": "Article", // General Article type for "Others"
         "headline": data.title,
-        "image": [thumbnailObj?.url],
+        "image": thumbnailObj?.url ? [thumbnailObj.url] : [],
         "datePublished": data.created_at,
         "dateModified": data.updated_at || data.created_at,
         "author": [{
-            "@type": "Person",
+            "@type": "Organization",
             "name": siteName,
             "url": clientURL
         }]
@@ -114,7 +121,8 @@ const NewsView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
             setNote({ type: "error", title: err.message });
         } finally { setState({ sending: false }); }
     };
-    const contents = typeof data.content === "string" ? (JSON.parse(data.content) as Content[]) : data.content
+
+    const contents = typeof data.content === "string" ? (JSON.parse(data.content || "[]") as Content[]) : data.content;
 
     return (
         <>
@@ -123,20 +131,20 @@ const NewsView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
                 <meta name="description" content={seoDesc} />
                 <meta property="og:title" content={data.title} />
                 <meta property="og:description" content={seoDesc} />
-                <meta property="og:image" content={thumbnailObj?.url} />
+                {thumbnailObj?.url && <meta property="og:image" content={thumbnailObj.url} />}
                 <meta property="og:type" content="article" />
-                <link rel="canonical" href={`${clientURL}/news/${data.slug}`} />
+                {/* Fixed: Canonical points to /others/ */}
+                <link rel="canonical" href={`${clientURL}/others/${data.slug}`} />
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
             </Head>
 
             <main className={styles[`${mobileClass}container`]}>
                 <section className={styles[`${mobileClass}content_container`]}>
 
-                    {/* Replaced Player with Article Featured Image */}
                     <header className={styles[`${mobileClass}featured_image_container`]}>
-                        {contents?.map((content) => (
+                        {contents?.map((content, idx) => (
                             <ImageViewer
-                                key={content.id}
+                                key={content.id || idx}
                                 src={content?.url}
                                 alt={data.title}
                                 options={{
@@ -162,8 +170,6 @@ const NewsView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
                             dangerouslySetInnerHTML={{ __html: sanitizedDescription }}
                         />
 
-                        {/* Removed Album/Music Download logic for News */}
-
                         {state.isMounted && (
                             <section className={styles.comment_section_container}>
                                 {Boolean(data.comment_enabled) && (
@@ -180,7 +186,7 @@ const NewsView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
                                         />
                                     </div>
                                 )}
-                                <h3>Comments</h3>
+                                <h3 className={styles.comment_title}>Comments</h3>
                                 <div className={styles.comments}>
                                     {state.loadingComments && <ActivityIndicator size='small' style='spin' cover />}
                                     {!state.loadingComments && state.comments?.results?.length === 0 && (
@@ -207,7 +213,7 @@ const NewsView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
                 {similarPosts?.results?.length > 0 && (
                     <section className={styles.others_container}>
                         <header className={styles.section_two_header}>
-                            <h2 className={styles.section_two_header_text}>Related News</h2>
+                            <h2 className={styles.section_two_header_text}>Related Content</h2>
                             <div className={styles.section_two_header_line} />
                         </header>
                         <ul className={styles[`${mobileClass}section_two_contents`]}>
@@ -232,20 +238,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         const { data, error } = await getPost({ slug });
         if (error || !data) return { notFound: true };
 
-        // Allow more tags for News Articles (like links and lists)
+        // Sanitization: Adjust tags based on what "Others" content might need
         const sanitizedDescription = DOMPurify.sanitize(data.description || "", {
-            FORBID_TAGS: ['img', 'audio', 'video', 'h1', 'h2', 'h3', "h4", "h5", "h6", 'hr', 'script'],
-            //FORBID_CONTENTS: ['img', 'audio', 'video', 'a', 'h1', 'h2', 'h3', 'hr', 'script'],
+            FORBID_TAGS: ['img', 'audio', 'video', 'script', 'style'],
+            // Note: If 'a' (links) are forbidden, users can't click external links in your posts.
         });
 
-        // Set content_type specifically to news for related posts
+        // Set content_type specifically to "others" for related items
         const { data: similarPosts } = await getPosts({
-            content_type: "news",
-            title: slug.split("-")[0]
+            content_type: "others",
+            title: slug.split("-")[0] // Simple keyword match from slug
         } as PostFilter);
 
         return { props: { data, sanitizedDescription, similarPosts } };
-    } catch (e) { return { notFound: true }; }
+    } catch (e) {
+        return { notFound: true };
+    }
 };
 
-export default NewsView;
+export default OthersView;

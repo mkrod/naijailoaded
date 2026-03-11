@@ -1,6 +1,6 @@
 import { Request, response, Response } from "express";
 import { db, knexDb } from "../config/db.config.js"; // your DB connection
-import { PostSQLResult, Post, PostFilter } from "../types/post.types.js";
+import { Post, PostFilter } from "../types/post.types.js";
 import { AuthRequest } from "../types/auth.type.js";
 import { v4 as uuid4 } from "uuid"
 

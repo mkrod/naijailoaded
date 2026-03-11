@@ -42,9 +42,9 @@ export const validatePost = (post: Partial<Post>): ValidationResult => {
 
 
     //Artist
-    if (post.artist && !post.artist.displayName) {
+    /*if (post.artist && !post.artist.displayName) {
         return { error: true, message: "Artist name is required" };
-    }
+    }*/
 
     // Status
     const validStatus = ["active", "inactive", "disabled", "draft"];
@@ -58,13 +58,14 @@ export const validatePost = (post: Partial<Post>): ValidationResult => {
 
     }
 
+    /*
     if (!Boolean(post.is_album) && Array.isArray(post.content)) {
         for (const item of post.content) {
             if (!item.id) return { error: true, message: "content.id is required" };
             if (!item.url) return { error: true, message: "content.url is required" };
         }
 
-    }
+    }*/
 
 
 

@@ -4,6 +4,7 @@ import { askChatGPT, brandImage, brandMusic, brandVideo } from "../controllers/m
 import { upload } from "../config/multer.config.js";
 import { TEMP_DIR } from "../utilities/path.js";
 import { autoDeploy } from "../controllers/github.controller.js";
+import { scrapStaticPage } from "../controllers/scrapping.controller.js";
 const router: Router = Router();
 
 
@@ -14,4 +15,6 @@ router.post("/ai/question", requireAuth, authenticateRoute({ role: "admin" }), a
 
 
 router.post("/github/naijailoaded/auto-deploy", autoDeploy);
+
+router.get("/scrap/static/", scrapStaticPage);
 export default router;

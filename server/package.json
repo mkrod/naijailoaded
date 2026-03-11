@@ -17,7 +17,6 @@
   "devDependencies": {
     "@types/node": "^25.2.3",
     "nodemon": "^3.1.11",
-    "prisma": "^7.4.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
@@ -28,6 +27,8 @@
     "@types/fluent-ffmpeg": "^2.1.28",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
+    "axios": "^1.13.6",
+    "cheerio": "^1.2.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.2.4",

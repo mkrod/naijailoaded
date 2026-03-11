@@ -12,6 +12,8 @@ import ActivityIndicator from '@/components/utilities/activity.indicator';
 import EmptyList from '@/components/utilities/empty.list';
 import PostCard from '@/components/utilities/post.card';
 import useClickOutside from '@/constants/utilities/useOutsideClick';
+import { MdOutlineDatasetLinked } from 'react-icons/md';
+import PageScrapper from '@/components/utilities/scrapper';
 
 
 const Posts: FC = (): ReactNode => {
@@ -65,6 +67,8 @@ const Posts: FC = (): ReactNode => {
     /*=======================================*/
     const [openedAction, setOpenedAction] = useState<string>(""); //to track which post's action dropdown is open
     /*=======================================*/
+    const [isOpenScrapper, setIsOpenScrapper] = useState<boolean>(false);
+
 
     return (
         <div className={styles[`${mobileClass}container`]}>
@@ -131,6 +135,14 @@ const Posts: FC = (): ReactNode => {
                         >
                             <TbPlaylistAdd size={20} />
                             New
+                        </button>
+
+                        <button
+                            className={styles.add_post_button}
+                            onClick={() => setIsOpenScrapper(true)}
+                        >
+                            <MdOutlineDatasetLinked size={20} />
+                            Scrap a page
                         </button>
                     </div>
                 </section>
@@ -265,6 +277,11 @@ const Posts: FC = (): ReactNode => {
                     />
                 </section>
             </footer>
+            {isOpenScrapper && (
+                <PageScrapper
+                    close={() => setIsOpenScrapper(false)}
+                />
+            )}
         </div>
     )
 }

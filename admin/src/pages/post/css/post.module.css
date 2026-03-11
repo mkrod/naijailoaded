@@ -61,10 +61,18 @@
 
 .add_new_post_icon {
     height: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
 }
 
 .mobile_add_new_post_icon {
     height: 2.5rem;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
 }
 
 
