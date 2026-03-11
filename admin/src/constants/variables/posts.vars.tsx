@@ -52,11 +52,11 @@ export const validatePost = (post: Partial<Post>): ValidationResult => {
         return { error: true, message: "invalid post status" };
     }
 
-    // Content
+    /* Content
     if (!Boolean(post.is_album) && !Array.isArray(post.content)) {
         return { error: true, message: "Content must be an array" };
 
-    }
+    }*/
 
     /*
     if (!Boolean(post.is_album) && Array.isArray(post.content)) {
