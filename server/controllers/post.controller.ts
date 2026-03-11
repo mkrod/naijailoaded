@@ -357,12 +357,15 @@ export const getSpecificPost = async (req: Request, res: Response) => {
     }
 }*/
 
-export const getSpecificPost = async (req: Request, res: Response) => {
+export const getSpecificPost = async (req: AuthRequest, res: Response) => {
     try {
         const { slug } = req.params as { slug: string | undefined };
         if (!slug) {
             return res.status(400).json({ status: 400, message: "Slug is required" });
         }
+
+        const status = req.user?.role !== "admin" ? "active" : undefined;
+
 
         const sql = `
             SELECT 
@@ -376,11 +379,11 @@ export const getSpecificPost = async (req: Request, res: Response) => {
                 ) as aggregated_child_content
             FROM posts p
             LEFT JOIN users u ON p.author_id = u.user_id
-            WHERE p.slug = ?
+            WHERE p.slug = ? AND p.status = ?
             LIMIT 1
         `;
 
-        const [result]: [any[], any] = await db.query(sql, [slug]);
+        const [result]: [any[], any] = await db.query(sql, [slug, status]);
         const data = result[0];
 
         if (!data) {

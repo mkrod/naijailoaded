@@ -5,7 +5,7 @@ const router: Router = Router();
 
 
 router.get("/", optionalAuth, getPosts);
-router.get("/:slug", getSpecificPost);
+router.get("/:slug", optionalAuth, getSpecificPost);
 router.put("/", requireAuth, authenticateRoute({ requireUser: true, role: "admin" }), addPost);
 router.delete("/", requireAuth, authenticateRoute({ requireUser: true, role: "admin" }), deletePost);
 
