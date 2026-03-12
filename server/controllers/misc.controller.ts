@@ -13,13 +13,14 @@ import { ASSETS_DIR, TEMP_DIR, UPLOAD_DIR, uploadPath } from "../utilities/path.
 import { createLibrary } from "./library.controller.js";
 import { CreateLibraryPayload } from "../types/library.types.js";
 import { downloadFile } from "../middlewares/download.js";
+import { db } from "../config/db.config.js";
 
 const isProd = process.env.NODE_ENV === "production";
 
 
 export const brandVideo = async (req: AuthRequest, res: Response) => {
     const file = (req as any).file as Express.Multer.File;
-    const { watermark, link } = req.body as { watermark: "true" | "false", link?: string };
+    const { title, watermark, link } = req.body as { title?: string, watermark: "true" | "false", link?: string };
 
     // 1. Setup Paths & Identifiers first
     // ✅ FIXED PATHS
@@ -28,7 +29,7 @@ export const brandVideo = async (req: AuthRequest, res: Response) => {
 
     const library_id = uuidv4();
 
-    const uniqueName = `branded-${library_id}-${Date.now()}.mp4`;
+    const uniqueName = title ? (await generateMediaName(title, "video")).uniqueName : `branded-${library_id}-${Date.now()}.mp4`;
     const outputPath = path.join(uploadDir, uniqueName);
     const serverPort = isProd ? "" : process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
     const serverURI = process.env.SERVER_URL ? `${process.env.SERVER_URL}${serverPort}` : "";
@@ -55,7 +56,7 @@ export const brandVideo = async (req: AuthRequest, res: Response) => {
             //create the media in the library
             const data: CreateLibraryPayload = {
                 user: req.user,
-                libraries: [{ library_id, library_url: publicUrl, library_type: "video" }],
+                libraries: [{ library_id, library_url: publicUrl, library_name: uniqueName, library_type: "video" }],
             }
             const { status, message } = await createLibrary({ local: true, data }) as CustomResponse;
             if (status && status === 201) {
@@ -75,7 +76,7 @@ export const brandVideo = async (req: AuthRequest, res: Response) => {
             //create the media in the library
             const data: CreateLibraryPayload = {
                 user: req.user,
-                libraries: [{ library_id, library_url: link, library_type: "video" }],
+                libraries: [{ library_id, library_url: link, library_name: uniqueName, library_type: "video" }],
             }
             const { status, message } = await createLibrary({ local: true, data }) as CustomResponse;
             if (status && status === 201) {
@@ -128,7 +129,7 @@ export const brandVideo = async (req: AuthRequest, res: Response) => {
             //create the media in the library
             const data: CreateLibraryPayload = {
                 user: req.user,
-                libraries: [{ library_id, library_url: publicUrl, library_type: "video" }],
+                libraries: [{ library_id, library_url: publicUrl, library_name: uniqueName, library_type: "video" }],
             }
             const { status, message } = await createLibrary({ local: true, data }) as CustomResponse;
             if (status && status === 201) {
@@ -207,7 +208,8 @@ export const brandMusic = async (req: AuthRequest, res: Response) => {
     const coverPath = path.join(ASSETS_DIR, "nl_watermark_music.jpg");
     const jinglePath = "https://naijailoaded.com.ng/wp-content/uploads/2024/09/More-music-at-Naijailoaded.ng-jingle.mp3";
 
-    const uniqueName = `branded-${library_id}-${Date.now()}.mp3`;
+    const uniqueName = title ? (await generateMediaName(title, "music")).uniqueName : `branded-${library_id}-${Date.now()}.mp3`;
+    //const uniqueName = `branded-${library_id}-${Date.now()}.mp3`;
     const outputPath = path.join(uploadDir, uniqueName);
     const serverPort = isProd ? "" : process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
     const serverURI = process.env.SERVER_URL ? `${process.env.SERVER_URL}${serverPort}` : "";
@@ -286,7 +288,7 @@ export const brandMusic = async (req: AuthRequest, res: Response) => {
 
         const data: CreateLibraryPayload = {
             user: req.user,
-            libraries: [{ library_id, library_url: publicUrl, library_type: "music" }],
+            libraries: [{ library_id, library_url: publicUrl, library_name: uniqueName, library_type: "music" }],
         };
 
         const dbResult = await createLibrary({ local: true, data }) as CustomResponse;
@@ -311,177 +313,10 @@ export const brandMusic = async (req: AuthRequest, res: Response) => {
     }
 };
 
-//OLD//
-/*
-this setup doesn't work if the audio file is large 
-
-
-const getDuration = (filePath: string): number => {
-    const probe = spawnSync("ffprobe", [
-        "-v", "error",
-        "-show_entries", "format=duration",
-        "-of", "default=noprint_wrappers=1:nokey=1",
-        filePath
-    ]);
-    const duration = parseFloat(probe.stdout?.toString() || "0");
-    return isNaN(duration) ? 0 : duration;
-};
-
-export const brandMusic = async (req: AuthRequest, res: Response) => {
-    const file = req.file as Express.Multer.File;
-    const { title, artist, album, genre, description, producer, watermark, link } = req.body;
-
-
-    const uploadDir = UPLOAD_DIR;
-    const library_id = uuidv4();
-    const coverPath = path.join(ASSETS_DIR, "nl_watermark_music.jpg");
-    const jinglePath = "https://naijailoaded.com.ng/wp-content/uploads/2024/09/More-music-at-Naijailoaded.ng-jingle.mp3";
-
-
-    const uniqueName = `branded-${library_id}-${Date.now()}.mp3`;
-    const outputPath = path.join(uploadDir, uniqueName);
-    const serverPort = isProd ? "" : process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
-    const serverURI = process.env.SERVER_URL ? `${process.env.SERVER_URL}${serverPort}` : "";
-    console.log(serverURI);
-    const publicUrl = `${serverURI}${uploadPath}/${uniqueName}`;
-
-    // Ensure directory exists
-    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-    console.log("Downloading: ", link);
-    // 2. Determine Input Source
-    const inputSource = file ? file.path : await downloadFile(link, TEMP_DIR);
-
-    console.log("Source: ", inputSource);
-
-
-    if (!inputSource) {
-        return res.status(400).send({ message: "No file or link provided" });
-    }
-
-    // 4. Verification for Watermark
-    if (watermark === "true" && !fs.existsSync(coverPath)) {
-        return res.status(500).send({ message: "Watermark image missing on server" });
-    }
-
-
-    // Sanitize metadata to prevent shell errors
-    const clean = (val: any) => val ? String(val).replace(/[^\w\s-]/g, "").trim() : "";
-
-    // 1. Calculate Timings
-    const mainDur = getDuration(inputSource);
-    const jingleDur = 4; // Expected length of jingle in seconds
-
-    const posStart = 3000; // 3 seconds in
-    const posMid = Math.floor((mainDur / 2) * 1000);
-    const posEnd = Math.floor(Math.max(0, (mainDur - jingleDur - 1)) * 1000);
-
-    // 2. Build FFmpeg Arguments
-    let args: string[] = [];
-
-    if (watermark === "true") {
-        args = [
-            "-y",
-            "-i", inputSource,   // [0:a] Music
-            "-i", jinglePath,  // [1:a] Jingle
-            "-i", coverPath,   // [2:v] Cover
-            "-filter_complex",
-            `[0:a]volume=0.7[main];` +
-            `[1:a]volume=1.0,asplit=3[j1][j2][j3];` +
-            `[j1]adelay=${posStart}|${posStart}[a1];` +
-            `[j2]adelay=${posMid}|${posMid}[a2];` +
-            `[j3]adelay=${posEnd}|${posEnd}[a3];` +
-            `[main][a1][a2][a3]amix=inputs=4:weights=1 1 1 1:dropout_transition=0[outa]`,
-            "-map", "[outa]",
-            "-map", "2:v"
-        ];
-    } else {
-        args = [
-            "-y",
-            "-i", inputSource,
-            "-i", coverPath,
-            "-map", "0:a",
-            "-map", "1:v",
-            "-c:a", "copy" // Fast copy if no watermark
-        ];
-    }
-
-    // 3. Add Common Encoders and Metadata
-    args.push(
-        "-c:v", "mjpeg",
-        "-disposition:v:0", "attached_pic",
-        "-id3v2_version", "3",
-        "-metadata", `title=${clean(title) || 'NaijaLoaded'}`,
-        "-metadata", `artist=${clean(artist) || 'NaijaLoaded'}`,
-        "-metadata", `album=${clean(album) || 'NaijaLoaded Hits'}`,
-        "-metadata", `genre=${clean(genre) || 'Afrobeats'}`,
-        "-metadata", `comment=${clean(description) || 'NaijaLoaded.com'}`,
-        "-metadata", `composer=${clean(producer) || 'NaijaLoaded'}`,
-        outputPath
-    );
-
-    // 4. Execute
-    const result = spawnSync("ffmpeg", args);
-
-    if (result.status !== 0) {
-        console.error("❌ FFmpeg Error:", result.stderr?.toString());
-        return res.status(500).send("Branding failed during processing.");
-    }
-
-    // Inspect the tagged file
-    parseFile(outputPath)
-        .then(metadata => {
-            console.log('Title:', metadata.common.title);
-            console.log('Artist:', metadata.common.artist);
-            console.log('Album:', metadata.common.album);
-            console.log('Genre:', metadata.common.genre);
-            console.log('Comment:', metadata.common.comment);
-            console.log('Producer:', metadata.common.composer);
-        })
-        .catch(err => {
-            console.error('Error reading metadata:', err);
-        });
-
-    //clean up
-    try {
-        if (fs.existsSync(inputSource)) fs.unlinkSync(inputSource);
-    } catch (cleanupErr) {
-        console.error("Cleanup error:", cleanupErr);
-    }
-
-
-    console.log("✅ Processing finished");
-
-
-    //create the media in the library
-    const data: CreateLibraryPayload = {
-        user: req.user,
-        libraries: [{ library_id, library_url: publicUrl, library_type: "music" }],
-    }
-    const { status, message } = await createLibrary({ local: true, data }) as CustomResponse;
-
-    if (status && status === 201) {
-        res.status(status).json({
-            status,
-            message,
-            data: {
-                id: library_id,
-                url: publicUrl
-            }
-        })
-    } else if (status && status !== 201) {
-        //failed
-        res.status(status).json({ message });
-    } else {
-        res.status(500).json({ message });
-    }
-
-};
-*/
 
 export const brandImage = async (req: AuthRequest, res: Response) => {
     const file = (req as any).file as Express.Multer.File;
-    const { link } = req.body as { watermark: "true" | "false", link?: string };
+    const { title, link } = req.body as { title?: string, watermark: "true" | "false", link?: string };
 
     // 1. Setup Paths & Identifiers first
     // ✅ FIXED PATHS
@@ -489,8 +324,8 @@ export const brandImage = async (req: AuthRequest, res: Response) => {
     const uploadDir = UPLOAD_DIR;
 
     const library_id = uuidv4();
-
-    const uniqueName = `branded-${library_id}-${Date.now()}.png`;
+    const uniqueName = title ? (await generateMediaName(title, "image")).uniqueName : `branded-${library_id}-${Date.now()}.png`;
+    //const uniqueName = `branded-${library_id}-${Date.now()}.png`;
     const outputPath = path.join(uploadDir, uniqueName);
     const serverPort = isProd ? "" : process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
     const serverURI = process.env.SERVER_URL ? `${process.env.SERVER_URL}${serverPort}` : "";
@@ -523,7 +358,7 @@ export const brandImage = async (req: AuthRequest, res: Response) => {
     //create the media in the library
     const data: CreateLibraryPayload = {
         user: req.user,
-        libraries: [{ library_id, library_url: publicUrl, library_type: "image" }],
+        libraries: [{ library_id, library_url: publicUrl, library_name: uniqueName, library_type: "image" }],
     }
     const { status, message } = await createLibrary({ local: true, data }) as CustomResponse;
 
@@ -546,6 +381,43 @@ export const brandImage = async (req: AuthRequest, res: Response) => {
 
 }
 
+function slugify(text: string) {
+    return text
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+}
+async function generateMediaName(
+    title: string,
+    type: "image" | "music" | "video" = "image"
+) {
+    const ext = { image: "png", music: "mp3", video: "mp4" };
+    const slug = slugify(title);
+
+    const [rows] = await db.query(
+        "SELECT library_name FROM library WHERE library_name LIKE ?",
+        [`${slug}%`]
+    );
+
+    const files = rows as any[];
+
+    if (files.length === 0) {
+        return { uniqueName: `${slug}.${ext[type]}` };
+    }
+
+    let counter = 2;
+
+    while (true) {
+        const name = `${slug}-${counter}.${ext[type]}`;
+        const exists = files.some((f) => f.library_name === name);
+
+        if (!exists) {
+            return { uniqueName: name };
+        }
+
+        counter++;
+    }
+}
 
 export const askChatGPT = async (req: AuthRequest, res: Response) => {
     try {

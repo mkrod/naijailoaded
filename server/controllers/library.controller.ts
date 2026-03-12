@@ -128,7 +128,7 @@ export const createLibrary = async ({ req, res, local, data }: CreateLibraryPara
         console.log("Inserting Medias: ", values);
 
         await db.query(
-            "INSERT INTO library (library_id, library_url, library_type) VALUES ?",
+            "INSERT INTO library (library_id, library_url, library_name, library_type) VALUES ?",
             [values] // ⬅️ IMPORTANT: extra wrapping
         );
         return responseHelper({ status: 201, message: "Successfully inserted libraries" });

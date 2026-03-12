@@ -19,6 +19,7 @@ interface PostsContexts {
     postFilter: PostFilter;
     setPostFilter: Dispatch<SetStateAction<PostFilter>>;
     setFetchingPosts: Dispatch<SetStateAction<boolean>>;
+    albums: Post[];
 }
 
 export const PostsContext = createContext<PostsContexts | null>(null);
@@ -30,7 +31,7 @@ export const PostsProvider: FC<{ children: ReactNode }> = ({ children }): ReactN
     const [postsResponse, setPostsResponse] = useState<DefaultRes>(defaultPostsRes);
     const [posts, setPosts] = useState<Post[]>([]);
     const [fetchingPosts, setFetchingPosts] = useState<boolean>(true);
-
+    const [albums, setAlbums] = useState<Post[]>([]);
     const [postFilter, setPostFilter] = useState<PostFilter>(defaultPostsFilter as PostFilter);
 
     useEffect(() => {
@@ -40,6 +41,7 @@ export const PostsProvider: FC<{ children: ReactNode }> = ({ children }): ReactN
             .then((res) => {
                 setPostsResponse(res?.data ?? defaultPostsRes);
                 setPosts(res?.data?.results ?? []);
+                setAlbums(res?.data?.albums || []);
             })
             .catch((err) => {
                 console.error("Error fetching posts: ", err);
@@ -53,12 +55,13 @@ export const PostsProvider: FC<{ children: ReactNode }> = ({ children }): ReactN
 
     const memoisedValues = useMemo(() => ({
         posts,
+        albums,
         postsResponse,
         fetchingPosts,
         postFilter,
         setPostFilter,
         setFetchingPosts
-    }), [posts, postsResponse, fetchingPosts, postFilter]);
+    }), [posts, postsResponse, fetchingPosts, postFilter, albums]);
 
     return (
         <PostsContext.Provider value={memoisedValues}>

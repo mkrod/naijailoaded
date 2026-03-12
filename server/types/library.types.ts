@@ -28,6 +28,7 @@ export interface Library {
     id?: number; // for ordering from mysql
     library_id: string; //unique identifier
     library_url: string; // link to the library
+    library_name: string;
     library_type: "music" | "video" | "image"
 }
 

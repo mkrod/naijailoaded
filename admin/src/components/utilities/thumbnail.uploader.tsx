@@ -18,11 +18,11 @@ interface Props {
     title?: string;
     subtitle?: string;
 
-    //post: Post;
+    post: Post;
     updatePost: (payload: Partial<Post>) => void;
 }
 
-const ThumbnailUploader: FC<Props> = ({ updatePost, postThumbnail, /*thumbnailPreview, removeFile, setFile,*/ title, subtitle }): ReactNode => {
+const ThumbnailUploader: FC<Props> = ({ post, updatePost, postThumbnail, /*thumbnailPreview, removeFile, setFile,*/ title, subtitle }): ReactNode => {
     const { setNote } = useGlobalProvider();
     const [processingMedia, setProcessingMedia] = useState<boolean>(false);
 
@@ -47,6 +47,8 @@ const ThumbnailUploader: FC<Props> = ({ updatePost, postThumbnail, /*thumbnailPr
                  if (post.others?.producer) formData.append("producer", post.others.producer);
              }*/
 
+
+            if (post.title) formData.append("title", `${post.title}${post.artist?.displayName ? `-by-${post.artist.displayName}` : ""}`);
             formData.append("watermark", "false");
 
             // 2. Add File OR Link to FormData

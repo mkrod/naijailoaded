@@ -36,7 +36,7 @@ interface Uploading {
 const CreatePost: FC = (): ReactNode => {
 
     const { isMobile, setNote, setPrompt } = useGlobalProvider();
-    const { posts, setFetchingPosts } = usePostProvider();
+    const { posts, setFetchingPosts, albums } = usePostProvider();
     const router = useRouter();
     const state = router.state as { post?: Post };
     const mobileClass = isMobile ? "mobile_" : "";
@@ -122,8 +122,6 @@ const CreatePost: FC = (): ReactNode => {
 
     const contents: Content[] = typeof post.content === "string" ? JSON.parse(post.content) : (post.content ?? []);
     const contentLength = contents.length;
-
-    const albums = posts?.filter((p) => p.is_album);
 
     const { user } = useUserProvider();
     useEffect(() => {
@@ -296,7 +294,7 @@ const CreatePost: FC = (): ReactNode => {
                         <ThumbnailUploader
                             title='Thumbnail'
                             subtitle='Add a cover art to represent the post'
-                            //post={post}
+                            post={post}
                             updatePost={updatePost}
                             postThumbnail={postThumbnail}
                         //thumbnailPreview={previews[thumbnailIndexInSlot]}

@@ -145,10 +145,17 @@ export const getPosts = async (req: AuthRequest, res: Response) => {
             nextCursor = lastItem ? { createdAt: lastItem.created_at, postId: lastItem.post_id } : null;
         }
 
+        let albums: Post[] = [];
+        if (req.user?.role === "admin") {
+            const [albumQuery]: [any[], any] = await db.query("SELECT * FROM posts WHERE is_album = ?", [1]);
+            albums = (albumQuery as Post[]);
+        }
+
+
         res.status(200).json({
             status: 200,
             message: "Posts fetched successfully",
-            data: { perPage: filter.limit, page, totalResult, hasNext, nextCursor, results },
+            data: { perPage: filter.limit, page, totalResult, hasNext, nextCursor, results, albums },
         });
 
     } catch (err) {

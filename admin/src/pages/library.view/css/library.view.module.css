@@ -1,0 +1,85 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 2rem;
+    gap: 1rem;
+}
+
+.mobile_container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 1rem;
+    gap: 1rem;
+}
+
+
+.header_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    min-height: 3rem;
+}
+
+.mobile_header_container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.header_left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.header_title {
+    font-size: var(--xl-font);
+    font-weight: 600;
+}
+
+.header_sub_title {
+    color: var(--color-fade);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.header_right {
+    margin-left: auto;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+.mobile_header_right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: fit-content;
+}
+
+.action_button {
+    height: 2rem;
+    width: 2rem;
+    border-radius: 0.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color ease-in-out .275s;
+    cursor: pointer;
+}
+
+.action_button_delete {
+    background-color: #be0000;
+    color: white;
+    border-color: var(--accent-sec);
+}
+
+
+.action_button:hover {
+    background-color: #ff0000;
+    /* for the new_asset button*/
+    color: whitesmoke;
+}
