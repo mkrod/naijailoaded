@@ -118,7 +118,8 @@ const PostCard: FC<Props> = ({ isSelected, data, sn, openedAction, setOpenedActi
                     checked={isSelected}
                     onChange={(_, value) => {
                         onSelected?.({ id: data.post_id, value });
-                    }} />
+                    }}
+                />
             </div>
             <div className={`${styles.table_col} ${styles.sn}`}>
                 {sn}

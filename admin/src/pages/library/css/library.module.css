@@ -4,6 +4,7 @@
     height: 100vh;
     padding: 2rem;
     gap: 1rem;
+    position: relative;
 }
 
 .mobile_container {
@@ -170,6 +171,17 @@
     height: 30rem;
 }
 
+
+.mobile_main_container {
+    overflow-x: auto;
+    border-radius: 0.2rem;
+    position: relative;
+
+    display: flex;
+    min-height: 0;
+    height: 40rem;
+}
+
 .inner_scroll_container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -186,7 +198,7 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 0.5rem;
     /* 1280px */
-    min-width: 100%;
+    min-width: 450px;
     height: 100%;
 }
 

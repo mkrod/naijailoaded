@@ -343,7 +343,8 @@ export const formatNumberString = (num: number, decimals = 2) => {
 };
 
 
-export function formatDateProfessional(input: Date | string): string {
+export function formatDateProfessional(input: Date | string | undefined): string {
+    if (!input) return "Invalid Date";
     const now = new Date();
     const date = typeof input === "string" ? new Date(input) : input;
     if (isNaN(date.getTime())) return "Invalid date";
@@ -639,3 +640,27 @@ export const validateMediaLink = (link: string, inputType: string): boolean => {
         return false;
     }
 };
+
+
+export async function getFileSize(url: string): Promise<string> {
+    try {
+        const response = await serverRequest("get", "/misc/get-file-size", { url });
+        const contentLength = response.data.size;
+
+        if (!contentLength) return "Size unknown";
+
+        let bytes = parseInt(contentLength, 10);
+        const units = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        let unitIndex = 0;
+
+        // Scale the number down until it's under 1024
+        while (bytes >= 1024 && unitIndex < units.length - 1) {
+            bytes /= 1024;
+            unitIndex++;
+        }
+
+        return `${bytes.toFixed(2)} ${units[unitIndex]}`;
+    } catch (error) {
+        return "Error fetching size";
+    }
+}

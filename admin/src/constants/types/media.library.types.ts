@@ -19,4 +19,5 @@ export interface MediaLibrary {
     library_url: string;
     library_type: LibraryTypes;
     created_at: string;
+    updated_at: string;
 }

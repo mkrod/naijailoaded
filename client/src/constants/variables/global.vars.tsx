@@ -201,9 +201,10 @@ export const navLinks = [
 export const subLinks = [
     { name: "Trending", path: "/trending" },
     { name: "DJ Mix", path: "/mix-tape" },
-    { name: "News", path: "/news" },
     { name: "Sport", path: "/sport" },
-    { name: "Advertise", path: "/advert" },
+    { name: "Advert", path: "/ads" },
+    { name: "Movies", path: "/movies" },
+    { name: "Free Beats", path: "/free-beat" }
 ]
 
 

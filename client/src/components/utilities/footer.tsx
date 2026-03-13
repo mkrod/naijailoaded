@@ -6,7 +6,8 @@ import { useGlobalProvider } from '@/constants/providers/global.provider'
 import InputField from './input.field'
 import { LuDot } from 'react-icons/lu'
 import { FaFacebookSquare } from 'react-icons/fa'
-import { FaInstagram, FaSquareXTwitter } from 'react-icons/fa6'
+import { FaInstagram, FaSquareXTwitter, FaYoutube } from 'react-icons/fa6'
+import { SiAudiomack } from 'react-icons/si'
 
 const miscLink = [
     {
@@ -93,25 +94,36 @@ const Footer: FC = (): ReactNode => {
                     </div>
                     <nav className={styles.social_links}>
                         <Link
+                            title='Facebook'
                             target="_blank"
                             className={styles.social_link}
-                            href="https://www.facebook.com"
+                            href="https://www.facebook.com/NaijailoadedNG/"
                         >
                             <FaFacebookSquare size="100%" color='#1877F2' />
                         </Link>
                         <Link
+                            title='Instagram'
                             target="_blank"
                             className={styles.social_link}
-                            href="https://www.instagram.com"
+                            href="https://www.instagram.com/naijailoaded_ng/"
                         >
                             <FaInstagram size="100%" color='#d62976' />
                         </Link>
                         <Link
+                            title='Youtube'
                             target="_blank"
                             className={styles.social_link}
-                            href="https://www.x.com"
+                            href="https://www.youtube.com/channel/UCLPbV36QfyXqZzEnVyA2uiA"
                         >
-                            <FaSquareXTwitter size="100%" color='var(--color)' />
+                            <FaYoutube size="100%" color='#d20000' />
+                        </Link>
+                        <Link
+                            title='Audiomack'
+                            target="_blank"
+                            className={styles.social_link}
+                            href="https://audiomack.com/naijailoaded"
+                        >
+                            <SiAudiomack size="100%" color='#b56c00' />
                         </Link>
                     </nav>
                 </div>

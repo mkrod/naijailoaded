@@ -57,7 +57,7 @@
 .uploader_container,
 .uploaded_container {
     background-color: var(--background-sec);
-    height: 15rem;
+    min-height: 18rem;
     min-width: 100%;
     border-radius: 0.3rem;
     border: 2px dashed var(--border-fade);

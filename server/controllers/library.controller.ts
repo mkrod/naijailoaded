@@ -3,8 +3,9 @@ import { db } from "../config/db.config.js";
 import { AuthRequest } from "../types/auth.type.js";
 import { Response as CustomResponse } from "../types/global.types.js";
 import { CreateLibraryParams, CreateLibraryPayload, LibraryTypes, MediaLibrary, MediaLibraryFilter } from "../types/library.types.js";
-
-
+import { UPLOAD_DIR } from "../utilities/path.js";
+import fs from "fs";
+import path from 'path';
 
 export const getLibrary = async (req: AuthRequest, res: Response) => {
     try {
@@ -136,4 +137,51 @@ export const createLibrary = async ({ req, res, local, data }: CreateLibraryPara
         console.log("Failed to Insert Libraries: ", err.message);
     }
 
+}
+
+
+
+
+export const deleteMedia = async (req: any, res: Response) => {
+    try {
+        const { media } = req.body as { media: MediaLibrary };
+
+        if (!media?.library_url) {
+            return res.status(400).json({ status: 400, message: "Media URL is required!" });
+        }
+        console.log("Media Url: ", media.library_url);
+
+        const url = new URL(media.library_url);
+        const server = new URL(process.env.SERVER_URL ?? "https://192.168.43.150");
+
+        // 1. Check if the file is hosted on this server
+        const isLocal = url.hostname.toLowerCase() === server.hostname.toLowerCase();
+        //console.log(url.hostname + " ---- and ---- " + server.hostname)
+        if (isLocal) {
+            // 2. url.pathname gives you "/wp-content/some/file.ext"
+            // 3. path.join(UPLOAD_DIR, "/wp-content/some/file.ext") 
+            //    points to exactly where it sits on your disk.
+            // url.pathname is "/uploads/peace.png"
+            // path.basename(url.pathname) gives you "peace.png"
+            const filename = path.basename(url.pathname);
+
+            // This joins your absolute public path with just the file name
+            const filePath = path.normalize(path.join(UPLOAD_DIR, filename));
+            console.log("filePath: ", filePath)
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            } else {
+                return res.status(404).json({ status: 404, message: "File not found on disk" });
+            }
+
+
+        }
+
+        await db.query("DELETE FROM library WHERE library_id = ?", [media.library_id]);
+        return res.status(200).json({ status: 200, message: "Media deleted successfully" });
+
+    } catch (err) {
+        console.error("Error Deleting Media: ", err);
+        return res.status(500).json({ status: 500, message: "Server error during deletion" });
+    }
 }

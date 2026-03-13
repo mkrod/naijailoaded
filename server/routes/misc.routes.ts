@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { authenticateRoute, requireAuth } from "../middlewares/auth.js";
-import { askChatGPT, brandImage, brandMusic, brandVideo } from "../controllers/misc.controller.js";
+import { askChatGPT, brandImage, brandMusic, brandVideo, getFileSize } from "../controllers/misc.controller.js";
 import { upload } from "../config/multer.config.js";
 import { TEMP_DIR } from "../utilities/path.js";
 import { autoDeploy } from "../controllers/github.controller.js";
@@ -17,4 +17,7 @@ router.post("/ai/question", requireAuth, authenticateRoute({ role: "admin" }), a
 router.post("/github/naijailoaded/auto-deploy", autoDeploy);
 
 router.get("/scrap/static/", scrapStaticPage);
+
+router.get("/get-file-size", getFileSize);
+
 export default router;

@@ -1,22 +1,23 @@
 import { useGlobalProvider } from "@/constants/providers/global.provider";
 import styles from "./css/library.module.css";
-import { useRef, useState, type FC, type ReactNode, type RefObject } from 'react';
+import { useEffect, useRef, useState, type FC, type ReactNode, type RefObject } from 'react';
 //import { LuDot } from "react-icons/lu";
 import { Checkbox, Pagination } from "@mui/material";
 import Dropdown from "@/components/utilities/dropdown";
 import { useMediaLibraryProvider } from "@/constants/providers/media.library.provider";
-import type { LibraryOrder, LibraryTypes, MediaLibrary as Library } from "@/constants/types/media.library.types";
+import type { LibraryOrder, LibraryTypes, MediaLibrary } from "@/constants/types/media.library.types";
 import InputField from "@/components/utilities/input.field";
 import useClickOutside from "@/constants/utilities/useOutsideClick";
 import GridAssetCard from "@/components/utilities/grid.assets.card";
 import EmptyList from "@/components/utilities/empty.list";
 import ActivityIndicator from "@/components/utilities/activity.indicator";
+import LibraryCreator from "@/components/utilities/library.creator";
 
 
 
 const MediaLibrary: FC = (): ReactNode => {
 
-    const { isMobile } = useGlobalProvider();
+    const { isMobile, setNote } = useGlobalProvider();
     const mobileClass = isMobile ? "mobile_" : "";
     const { library, mediaLibraryFilter, mediaLibraryRes, fetchingLibrary, setFetchingLibrary, setMediaLibraryFilter } = useMediaLibraryProvider();
     const { page, perPage, totalResult } = mediaLibraryRes;
@@ -44,17 +45,35 @@ const MediaLibrary: FC = (): ReactNode => {
 
     const [activeView, _] = useState<"grid" | "list">("grid");
     const views = {
-        grid: (data: Library, key: string, props: any) => (
+        grid: (key: string, props: any) => (
             <GridAssetCard
                 key={key}
-                library={data}
                 {...props}
             />
         ),
-        list: (data: Library, key: string, props: any) => (
-            <GridAssetCard key={key} library={data} {...props} />
+        list: (key: string, props: any) => (
+            <GridAssetCard
+                key={key}
+                {...props}
+            />
         ),
     }
+
+    const [openCreator, setOpenCreator] = useState<boolean>(false);
+
+    /*=======================================*/
+    const [selectedMediaId, setSelectedMediaId] = useState<string[]>([]);
+    const [allIds, setAllIds] = useState<string[]>([])
+    useEffect(() => {
+        const ids = library.map((p) => p.library_id);
+        setAllIds(ids)   //will reset per page/result /*intentional*/
+    }, [library])
+
+    useEffect(() => {
+        if (!selectedMediaId.length || !totalResult || !library) return;
+        const message = `Selected ${selectedMediaId.length} Media(s)`;
+        setNote({ type: "warning", title: message });
+    }, [selectedMediaId]);
 
     return (
         <div className={styles[`${mobileClass}container`]}>
@@ -70,13 +89,31 @@ const MediaLibrary: FC = (): ReactNode => {
                     </span>
                 </div>
                 <div className={styles[`${mobileClass}header_right`]}>
-                    <button className={`${styles.action_button} ${styles.action_button_new_folder}`}>Add new folder</button>
-                    <button className={`${styles.action_button} ${styles.action_button_new_asset}`}>Add new assets</button>
+                    {/*<button className={`${styles.action_button} ${styles.action_button_new_folder}`}>Add new folder</button>*/}
+                    <button
+                        onClick={() => setOpenCreator(true)}
+                        className={`${styles.action_button} ${styles.action_button_new_asset}`}
+                    >
+                        Add new assets
+                    </button>
                 </div>
             </div>
             <div className={styles[`${mobileClass}filter_container`]}>
                 <div className={styles.checkbox_container}>
-                    <Checkbox />
+                    <Checkbox
+                        checked={!!allIds.length && allIds.every(id => selectedMediaId.includes(id))}
+                        onChange={(_, value) => {
+                            if (value) {
+                                setSelectedMediaId(prev =>
+                                    Array.from(new Set([...prev, ...allIds]))
+                                );
+                            } else {
+                                setSelectedMediaId(prev =>
+                                    prev.filter(id => !allIds.includes(id))
+                                );
+                            }
+                        }}
+                    />
                 </div>
                 <div className={styles[`${mobileClass}filters`]}>
                     <div className={styles.sort_container}>
@@ -117,14 +154,27 @@ const MediaLibrary: FC = (): ReactNode => {
                     />
                 </div>
             </div>
-            <div className={styles.main_container}>
+            <div className={styles[`${mobileClass}main_container`]}>
                 <div className={styles[`${mobileClass}inner_scroll_container`]}>
                     {!fetchingLibrary ? library.map((library) => {
+                        const isSelected = selectedMediaId.includes(library.library_id);
                         const props = {
-
+                            isSelected,
+                            library,
+                            selectedMediaIdLength: selectedMediaId.length,
+                            onSelected: ({ id, value }: { id: string, value: boolean }) => {
+                                if (value) {
+                                    setSelectedMediaId((prev) => ([...prev, id]))
+                                } else {
+                                    setSelectedMediaId((prev) => {
+                                        const filter = prev.filter((p) => p !== id);
+                                        return filter;
+                                    })
+                                }
+                            }
                         }
 
-                        return views[activeView](library, `${library.library_id}`, props);
+                        return views[activeView](library.library_id, props);
                     }) : null}
                     {!fetchingLibrary && library.length === 0 ? (
                         <div className={styles.empty_container}>
@@ -175,6 +225,11 @@ const MediaLibrary: FC = (): ReactNode => {
                     />
                 </section>
             </footer>
+            {openCreator && (
+                <LibraryCreator
+                    close={() => setOpenCreator(false)}
+                />
+            )}
         </div>
     )
 }

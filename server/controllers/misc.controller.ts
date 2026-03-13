@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { Response as CustomResponse } from "./../types/global.types.js"
 import { AuthRequest } from "../types/auth.type.js";
 import OpenAI from "openai";
@@ -14,6 +14,7 @@ import { createLibrary } from "./library.controller.js";
 import { CreateLibraryPayload } from "../types/library.types.js";
 import { downloadFile } from "../middlewares/download.js";
 import { db } from "../config/db.config.js";
+import axios from "axios";
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -29,7 +30,8 @@ export const brandVideo = async (req: AuthRequest, res: Response) => {
 
     const library_id = uuidv4();
 
-    const uniqueName = title ? (await generateMediaName(title, "video")).uniqueName : `branded-${library_id}-${Date.now()}.mp4`;
+    const name = title ?? getMediaName({ file, link });
+    const { uniqueName } = await generateMediaName(name, "video"); //title ? (await generateMediaName(title, "video")).uniqueName : `branded-${library_id}-${Date.now()}.mp4`;
     const outputPath = path.join(uploadDir, uniqueName);
     const serverPort = isProd ? "" : process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
     const serverURI = process.env.SERVER_URL ? `${process.env.SERVER_URL}${serverPort}` : "";
@@ -208,8 +210,8 @@ export const brandMusic = async (req: AuthRequest, res: Response) => {
     const coverPath = path.join(ASSETS_DIR, "nl_watermark_music.jpg");
     const jinglePath = "https://naijailoaded.com.ng/wp-content/uploads/2024/09/More-music-at-Naijailoaded.ng-jingle.mp3";
 
-    const uniqueName = title ? (await generateMediaName(title, "music")).uniqueName : `branded-${library_id}-${Date.now()}.mp3`;
-    //const uniqueName = `branded-${library_id}-${Date.now()}.mp3`;
+    const name = title ?? getMediaName({ file, link });
+    const { uniqueName } = await generateMediaName(name, "music");
     const outputPath = path.join(uploadDir, uniqueName);
     const serverPort = isProd ? "" : process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
     const serverURI = process.env.SERVER_URL ? `${process.env.SERVER_URL}${serverPort}` : "";
@@ -324,8 +326,8 @@ export const brandImage = async (req: AuthRequest, res: Response) => {
     const uploadDir = UPLOAD_DIR;
 
     const library_id = uuidv4();
-    const uniqueName = title ? (await generateMediaName(title, "image")).uniqueName : `branded-${library_id}-${Date.now()}.png`;
-    //const uniqueName = `branded-${library_id}-${Date.now()}.png`;
+    const name = title ?? getMediaName({ file, link });
+    const { uniqueName } = await generateMediaName(name, "image");
     const outputPath = path.join(uploadDir, uniqueName);
     const serverPort = isProd ? "" : process.env.SERVER_PORT ? `:${process.env.SERVER_PORT}` : "";
     const serverURI = process.env.SERVER_URL ? `${process.env.SERVER_URL}${serverPort}` : "";
@@ -440,4 +442,28 @@ export const askChatGPT = async (req: AuthRequest, res: Response) => {
         console.log("Error Asking GPT: ", err);
         return res.json({ status: 400, message: "Prompt missing", error: "prompt is undefined" });
     }
+}
+export const getFileSize = async (req: Request, res: Response) => {
+    const fileUrl = req.query.url as string;
+    try {
+        const response = await axios.head(fileUrl);
+        res.json({ data: { size: response.headers['content-length'] } });
+    } catch (error) {
+        res.status(500).send("Could not fetch size");
+    }
+};
+
+
+function getMediaName({ file, link }: { file: Express.Multer.File | undefined, link: string | undefined }) {
+    let raw = file?.originalname || "";
+
+    if (!raw.trim() && link) {
+        try {
+            raw = path.basename(new URL(link).pathname);
+        } catch {
+            raw = link.split('/').pop() || "";
+        }
+    }
+
+    return raw ? path.parse(raw).name : `branded-id-${Date.now()}`;
 }

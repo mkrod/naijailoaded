@@ -229,4 +229,4 @@ const MusicPlayer: FC<Props> = ({ thumbnail, data, totalTrack = 1, activeTrack =
         )
 }
 
-export default memo(MusicPlayer)
+export default memo(MusicPlayer);

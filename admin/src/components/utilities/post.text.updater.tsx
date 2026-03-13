@@ -117,10 +117,10 @@ const PostTextUpdater: FC<Props> = ({ post, updatePost, error, albumList = [] })
                     label='Description'
                     placeholder="Enter Post Description"
                     style={descStyles}
-                    CantUseCase='Title and artist is Required'
+                    CantUseCase={post.content_type === "music" ? 'Title and artist is Required' : "Title is Required"}
                     error={(e) => error(e)}
-                    prompt={(post.title?.trim() && post.artist?.displayName?.trim()) ? `
-                        - Give me a short-length content description for ${post.title} ${post.artist.displayName ? `by ${post.artist?.displayName}` : ""} ${post.content_type ? `in context of ${post.content_type}` : ""}.
+                    prompt={(post.title?.trim() && (post.content_type === "music" ? post.artist?.displayName?.trim() : true)) ? `
+                        - Give me a short-length content description for ${post.title} ${post.artist?.displayName ? `by ${post.artist?.displayName}` : ""} ${post.content_type ? `in context of ${post.content_type}` : ""}.
                             Requirements:
                         - Output HTML only (no Markdown, no explanations)
                         - Use <strong>, <em>, <u>, <p>, <br/>, <ul>, <li> where appropriate
