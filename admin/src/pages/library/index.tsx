@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, type FC, type ReactNode, type RefObject } 
 import { Checkbox, Pagination } from "@mui/material";
 import Dropdown from "@/components/utilities/dropdown";
 import { useMediaLibraryProvider } from "@/constants/providers/media.library.provider";
-import type { LibraryOrder, LibraryTypes, MediaLibrary } from "@/constants/types/media.library.types";
+import type { LibraryOrder, LibraryTypes } from "@/constants/types/media.library.types";
 import InputField from "@/components/utilities/input.field";
 import useClickOutside from "@/constants/utilities/useOutsideClick";
 import GridAssetCard from "@/components/utilities/grid.assets.card";
