@@ -26,6 +26,7 @@ export interface CreatePostFormState {
     schedule: Schedule;
     tagMeta: boolean;
     tagMedia: boolean;
+    librarySave: boolean;
 }
 
 interface Uploading {
@@ -48,15 +49,23 @@ const CreatePost: FC = (): ReactNode => {
         platformToShare: [],
         schedule: { date: null, time: null },
         tagMedia: true, //local state, not needed on server
-        tagMeta: false //local state, not needed on server
+        tagMeta: false, //local state, not needed on server
+        librarySave: true,
     });
 
-    const { tagMedia, tagMeta, autoSave, post, platformToShare, schedule } = formState;
+    const { tagMedia, tagMeta, autoSave, post, platformToShare, schedule, librarySave } = formState;
 
 
     /**
      * Bridge functions to update specific parts of the big state
      */
+
+    const updateLibrarySave = (state: boolean) => {
+        setFormState(prev => ({
+            ...prev,
+            librarySave: state
+        }));
+    }
 
     const updateAutoSave = (state: boolean) => {
         if (!state) {
@@ -297,6 +306,7 @@ const CreatePost: FC = (): ReactNode => {
                             post={post}
                             updatePost={updatePost}
                             postThumbnail={postThumbnail}
+                            librarySave={librarySave}
                         //thumbnailPreview={previews[thumbnailIndexInSlot]}
                         //setFile={(file) => setFileAtSlot(thumbnailIndexInSlot, file)}
                         //removeFile={() => removeFileAtSlot(thumbnailIndexInSlot)}
@@ -359,6 +369,7 @@ const CreatePost: FC = (): ReactNode => {
                                                 type={post.content_type}
                                                 tagMedia={tagMedia}
                                                 tagMeta={tagMeta}
+                                                librarySave={librarySave}
                                             />
                                         )
                                     })}
@@ -390,6 +401,8 @@ const CreatePost: FC = (): ReactNode => {
                     tagMedia={tagMedia}
                     updateTagMeta={updateTagMeta}
                     updateTagMedia={updateTagMedia}
+                    librarySave={librarySave}
+                    updateLibrarySave={updateLibrarySave}
                 />
                 <div className={styles.submit_container}>
                     {schedule.date && schedule.time && (

@@ -27,9 +27,12 @@ interface Props {
 
     tagMedia?: boolean;
     updateTagMedia?: (value: boolean) => void;
+
+    librarySave?: boolean;
+    updateLibrarySave?: (value: boolean) => void;
 }
 
-const PostOthersUpdater: FC<Props> = ({ tagMeta, updateTagMeta, tagMedia, updateTagMedia, autoSave, updateAutoSave, post, updatePost, platformToShare, setPlatformToShare, schedule, setSchedule }): ReactNode => {
+const PostOthersUpdater: FC<Props> = ({ librarySave, updateLibrarySave, tagMeta, updateTagMeta, tagMedia, updateTagMedia, autoSave, updateAutoSave, post, updatePost, platformToShare, setPlatformToShare, schedule, setSchedule }): ReactNode => {
 
 
     const [openDateSelector, setOpenDateSelector] = useState<boolean>(false);
@@ -216,6 +219,15 @@ const PostOthersUpdater: FC<Props> = ({ tagMeta, updateTagMeta, tagMedia, update
                         }}
                     />
                     <span>Auto save progress</span>
+                </div>
+                <div className={styles.radio_container}>
+                    <Checkbox
+                        checked={Boolean(librarySave)}
+                        onChange={(_, state) => {
+                            updateLibrarySave?.(state);
+                        }}
+                    />
+                    <span>Auto save to Library</span>
                 </div>
             </div>
 

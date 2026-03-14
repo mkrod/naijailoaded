@@ -23,6 +23,7 @@ const LibraryCreator: FC<Props> = ({ close }) => {
     const [processingMedia, setProcessingMedia] = useState<boolean>(false);
     const [ContentMode, setContentMode] = useState<"link" | "file">("file");
     const [link, setLink] = useState<string>("");
+
     async function handleModifyMedia({ files, link }: { files?: File[], link?: string }) {
         if (processingMedia) return;
         setProcessingMedia(true);
@@ -31,6 +32,7 @@ const LibraryCreator: FC<Props> = ({ close }) => {
             const formData = new FormData();
 
             formData.append("watermark", "false");
+            formData.append("librarySave", "true"); //should save
 
             // 2. Add File OR Link to FormData
             if (files && files.length > 0) {

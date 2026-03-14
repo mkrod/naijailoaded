@@ -32,9 +32,11 @@ interface Props {
 
     tagMeta: boolean;
     tagMedia: boolean;
+
+    librarySave?: boolean;
 }
 
-const ContentUploader: FC<Props> = ({ tagMedia, tagMeta, index, allContents, post, updatePost, title, postContent, /*contentPreview, removeFile,*/ type, allAlbum }): ReactNode => {
+const ContentUploader: FC<Props> = ({ librarySave, tagMedia, tagMeta, index, allContents, post, updatePost, title, postContent, /*contentPreview, removeFile,*/ type, allAlbum }): ReactNode => {
 
     const { setNote } = useGlobalProvider();
     const [processingMedia, setProcessingMedia] = useState<boolean>(false);
@@ -61,6 +63,7 @@ const ContentUploader: FC<Props> = ({ tagMedia, tagMeta, index, allContents, pos
             }
 
             formData.append("watermark", tagMedia ? "true" : "false");
+            formData.append("librarySave", librarySave ? "true" : "false");
 
             // 2. Add File OR Link to FormData
             if (files && files.length > 0) {

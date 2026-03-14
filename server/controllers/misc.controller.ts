@@ -21,7 +21,7 @@ const isProd = process.env.NODE_ENV === "production";
 
 export const brandVideo = async (req: AuthRequest, res: Response) => {
     const file = (req as any).file as Express.Multer.File;
-    const { title, watermark, link } = req.body as { title?: string, watermark: "true" | "false", link?: string };
+    const { title, watermark, link, librarySave } = req.body as { title?: string, watermark: "true" | "false", link?: string, librarySave?: string };
 
     // 1. Setup Paths & Identifiers first
     // ✅ FIXED PATHS
@@ -60,17 +60,33 @@ export const brandVideo = async (req: AuthRequest, res: Response) => {
                 user: req.user,
                 libraries: [{ library_id, library_url: publicUrl, library_name: uniqueName, library_type: "video" }],
             }
-            const { status, message } = await createLibrary({ local: true, data }) as CustomResponse;
-            if (status && status === 201) {
-                res.status(status).json({
-                    status,
-                    message,
+            if (librarySave === "true") {
+                const { status, message } = await createLibrary({ local: true, data }) as CustomResponse;
+
+                if (status && status === 201) {
+                    res.status(status).json({
+                        status,
+                        message,
+                        data: {
+                            id: library_id,
+                            url: publicUrl
+                        }
+                    })
+                }
+
+
+            } else {
+                //early return
+                return res.status(201).json({
+                    status: 201,
+                    message: "Success",
                     data: {
                         id: library_id,
                         url: publicUrl
                     }
                 })
             }
+
 
         } else if (link) {
             //no need to download, just create library
@@ -80,14 +96,29 @@ export const brandVideo = async (req: AuthRequest, res: Response) => {
                 user: req.user,
                 libraries: [{ library_id, library_url: link, library_name: uniqueName, library_type: "video" }],
             }
-            const { status, message } = await createLibrary({ local: true, data }) as CustomResponse;
-            if (status && status === 201) {
-                res.status(status).json({
-                    status,
-                    message,
+            if (librarySave === "true") {
+                const { status, message } = await createLibrary({ local: true, data }) as CustomResponse;
+
+                if (status && status === 201) {
+                    res.status(status).json({
+                        status,
+                        message,
+                        data: {
+                            id: library_id,
+                            url: publicUrl
+                        }
+                    })
+                }
+
+
+            } else {
+                //early return
+                return res.status(201).json({
+                    status: 201,
+                    message: "Success",
                     data: {
                         id: library_id,
-                        url: link
+                        url: publicUrl
                     }
                 })
             }
@@ -133,22 +164,38 @@ export const brandVideo = async (req: AuthRequest, res: Response) => {
                 user: req.user,
                 libraries: [{ library_id, library_url: publicUrl, library_name: uniqueName, library_type: "video" }],
             }
-            const { status, message } = await createLibrary({ local: true, data }) as CustomResponse;
-            if (status && status === 201) {
-                res.status(status).json({
-                    status,
-                    message,
+
+            if (librarySave === "true") {
+                const { status, message } = await createLibrary({ local: true, data }) as CustomResponse;
+                if (status && status === 201) {
+                    res.status(status).json({
+                        status,
+                        message,
+                        data: {
+                            id: library_id,
+                            url: publicUrl
+                        }
+                    })
+                } else if (status && status !== 201) {
+                    //failed
+                    res.status(status).json({ message });
+                } else {
+                    res.status(500).json({ message });
+                }
+
+
+            } else {
+                //early return
+                return res.status(201).json({
+                    status: 201,
+                    message: "Success",
                     data: {
                         id: library_id,
                         url: publicUrl
                     }
                 })
-            } else if (status && status !== 201) {
-                //failed
-                res.status(status).json({ message });
-            } else {
-                res.status(500).json({ message });
             }
+
         })
         .save(outputPath);
 };
@@ -203,7 +250,7 @@ const runFFmpeg = (args: string[]): Promise<void> => {
 
 export const brandMusic = async (req: AuthRequest, res: Response) => {
     const file = req.file as Express.Multer.File;
-    const { title, artist, album, genre, description, producer, watermark, link } = req.body;
+    const { title, artist, album, genre, description, producer, watermark, link, librarySave } = req.body;
 
     const uploadDir = UPLOAD_DIR;
     const library_id = uuidv4();
@@ -293,16 +340,24 @@ export const brandMusic = async (req: AuthRequest, res: Response) => {
             libraries: [{ library_id, library_url: publicUrl, library_name: uniqueName, library_type: "music" }],
         };
 
-        const dbResult = await createLibrary({ local: true, data }) as CustomResponse;
+        if (librarySave === "true") {
+            const dbResult = await createLibrary({ local: true, data }) as CustomResponse;
 
-        if (dbResult?.status === 201) {
+            if (dbResult?.status === 201) {
+                return res.status(201).json({
+                    status: 201,
+                    message: dbResult.message,
+                    data: { id: library_id, url: publicUrl }
+                });
+            } else {
+                return res.status(dbResult?.status || 500).json({ message: dbResult?.message });
+            }
+        } else {
             return res.status(201).json({
                 status: 201,
-                message: dbResult.message,
+                message: "Success",
                 data: { id: library_id, url: publicUrl }
             });
-        } else {
-            return res.status(dbResult?.status || 500).json({ message: dbResult?.message });
         }
 
     } catch (error: any) {
@@ -318,7 +373,7 @@ export const brandMusic = async (req: AuthRequest, res: Response) => {
 
 export const brandImage = async (req: AuthRequest, res: Response) => {
     const file = (req as any).file as Express.Multer.File;
-    const { title, link } = req.body as { title?: string, watermark: "true" | "false", link?: string };
+    const { title, link, librarySave } = req.body as { title?: string, watermark: "true" | "false", link?: string, librarySave?: string };
 
     // 1. Setup Paths & Identifiers first
     // ✅ FIXED PATHS
@@ -362,22 +417,34 @@ export const brandImage = async (req: AuthRequest, res: Response) => {
         user: req.user,
         libraries: [{ library_id, library_url: publicUrl, library_name: uniqueName, library_type: "image" }],
     }
-    const { status, message } = await createLibrary({ local: true, data }) as CustomResponse;
 
-    if (status && status === 201) {
-        res.status(status).json({
-            status,
-            message,
+    if (librarySave === "true") {
+        const { status, message } = await createLibrary({ local: true, data }) as CustomResponse;
+
+        if (status && status === 201) {
+            res.status(status).json({
+                status,
+                message,
+                data: {
+                    id: library_id,
+                    url: publicUrl
+                }
+            })
+        } else if (status && status !== 201) {
+            //failed
+            res.status(status).json({ message });
+        } else {
+            res.status(500).json({ message });
+        }
+    } else {
+        res.status(201).json({
+            status: 201,
+            message: "Success",
             data: {
                 id: library_id,
                 url: publicUrl
             }
         })
-    } else if (status && status !== 201) {
-        //failed
-        res.status(status).json({ message });
-    } else {
-        res.status(500).json({ message });
     }
 
 
