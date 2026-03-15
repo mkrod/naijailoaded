@@ -63,8 +63,9 @@ export const getPosts = async (req: AuthRequest, res: Response) => {
         }
 
         if (q.post_of_the_week === "true") {
-            // Ensures the date is within the last 7 days AND not a future date
-            conditions.push("p.post_of_the_week BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW()");
+            // We only care that it started within the last 7 days.
+            // This removes the "AND NOW()" which is likely the part blocking your result.
+            conditions.push("p.post_of_the_week >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
         }
 
         // --- Base SQL with Subquery for Child Content ---
