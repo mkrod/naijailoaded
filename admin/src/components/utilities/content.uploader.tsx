@@ -123,7 +123,7 @@ const ContentUploader: FC<Props> = ({ librarySave, tagMedia, tagMeta, index, all
 
     const [ContentMode, setContentMode] = useState<"link" | "file">("file");
     const source = Boolean(postContent?.is_embeded) ? "embeded" : "direct";
-    const [showTrailerField, setShowTrailerField] = useState<boolean>(false);
+    const [showTrailerField, setShowTrailerField] = useState<boolean>(Boolean(postContent?.trailer?.trim()));
 
 
     return (

@@ -152,61 +152,70 @@ const VideoPlayer: FC<Props> = ({ thumbnail, data, totalTrack = 1, activeTrack =
     //const cantPrev = activeTrack < 1;
     //const cantNext = activeTrack >= (totalTrack - 1);
     // console.log("URL: ", data?.url);
-    return data?.is_embeded ?
+    return data?.trailer?.trim() ?
         (
             <div
-                dangerouslySetInnerHTML={{ __html: data.trailer?.trim() ?? data.url }}
+                dangerouslySetInnerHTML={{ __html: data.trailer }}
                 className={`${styles.container}`}
             >
 
             </div >
-        ) :
-        (
-            <div className={`${styles.container}`}>
-                <div className={styles.video_container} onClick={handleVideoClick}>
-                    <video
-                        ref={videoRef}
-                        src={data?.url ?? undefined}
-                        className={styles.video}
-                        playsInline
-                    />
-                </div>
-
+        )
+        : data?.is_embeded ?
+            (
                 <div
-                    onMouseEnter={() => setShowingControls(true)}
-                    onTouchStart={() => setShowingControls(true)}
-                    onTouchCancel={() => setTimeout(() => setShowingControls(false), 5000)}
-                    onMouseLeave={() => setTimeout(() => setShowingControls(false), 5000)}
-                    className={`${styles.controls_container}  ${showingControls ? styles.controls_container_showing : ""}`}
+                    dangerouslySetInnerHTML={{ __html: data.url }}
+                    className={`${styles.container}`}
                 >
-                    <div onClick={togglePlay} className={styles.control_button}>
-                        {playingState !== "playing" ? <IoPlay size={24} color="white" /> : <IoPause size={24} color="white" />}
-                    </div>
 
-                    <span className={styles.time_display}>{elapsed}</span>
-
-                    <div className={styles.track_container}>
-                        <input
-                            type="range"
-                            min={0}
-                            max={100}
-                            step={0.1}
-                            value={progress}
-                            onChange={handleSeek}
-                            className={styles.track}
+                </div >
+            ) :
+            (
+                <div className={`${styles.container}`}>
+                    <div className={styles.video_container} onClick={handleVideoClick}>
+                        <video
+                            ref={videoRef}
+                            src={data?.url ?? undefined}
+                            className={styles.video}
+                            playsInline
                         />
                     </div>
 
-                    <span className={styles.time_display}>{formatTime(duration)}</span>
+                    <div
+                        onMouseEnter={() => setShowingControls(true)}
+                        onTouchStart={() => setShowingControls(true)}
+                        onTouchCancel={() => setTimeout(() => setShowingControls(false), 5000)}
+                        onMouseLeave={() => setTimeout(() => setShowingControls(false), 5000)}
+                        className={`${styles.controls_container}  ${showingControls ? styles.controls_container_showing : ""}`}
+                    >
+                        <div onClick={togglePlay} className={styles.control_button}>
+                            {playingState !== "playing" ? <IoPlay size={24} color="white" /> : <IoPause size={24} color="white" />}
+                        </div>
 
-                    <div onClick={(e) => {
-                        videoRef.current?.requestFullscreen();
-                    }} className={styles.fullscreen_button}>
-                        <MdFullscreen size={28} color="white" />
+                        <span className={styles.time_display}>{elapsed}</span>
+
+                        <div className={styles.track_container}>
+                            <input
+                                type="range"
+                                min={0}
+                                max={100}
+                                step={0.1}
+                                value={progress}
+                                onChange={handleSeek}
+                                className={styles.track}
+                            />
+                        </div>
+
+                        <span className={styles.time_display}>{formatTime(duration)}</span>
+
+                        <div onClick={(e) => {
+                            videoRef.current?.requestFullscreen();
+                        }} className={styles.fullscreen_button}>
+                            <MdFullscreen size={28} color="white" />
+                        </div>
                     </div>
                 </div>
-            </div>
-        );
+            );
 
     // return isFullscreen ? createPortal(playerUI, document.body) : playerUI;
 }
