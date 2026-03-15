@@ -141,7 +141,6 @@ const MusicView: FC<Props> = ({ data, sanitizedDescription, trendingPosts, postO
         } finally { setState({ sending: false }); }
     };
 
-    console.log("post of the week: ", postOfTheWeek);
 
     return (
         <>
@@ -313,7 +312,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
         const { data: postOfTheWeek } = await getPosts({ post_of_the_week: true }) as Response<APIArrayResponse<Post[]>>
         const POTW = postOfTheWeek?.results[0] as Post | undefined;
-        console.log("Posts of the week in console: ", postOfTheWeek);
+
         return { props: { data, sanitizedDescription, /*similarPosts, */trendingPosts, postOfTheWeek: POTW } };
 
     } catch (e) {
