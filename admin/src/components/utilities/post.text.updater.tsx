@@ -5,6 +5,7 @@ import EditableInput from "./input";
 import InputFieldStatic from "./input.field.static";
 import Dropdown from "./dropdown";
 import { useCategoryProvider } from "@/constants/providers/categories.provider";
+import { decodeHTML } from "@/constants/variables/global.vars";
 
 interface Props {
     post: Post;
@@ -113,7 +114,10 @@ const PostTextUpdater: FC<Props> = ({ post, updatePost, error, albumList = [] })
             <div className={styles.input_section}>
                 <EditableInput
                     value={post.description ?? "".trim()}
-                    onChange={(description) => updatePost({ description })}
+                    onChange={(description) => {
+                        const decoded = decodeHTML(description);
+                        updatePost({ description: decoded })
+                    }}
                     label='Description'
                     placeholder="Enter Post Description"
                     style={descStyles}

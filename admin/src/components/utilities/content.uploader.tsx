@@ -8,7 +8,7 @@ import MusicPlayer from './music.player';
 import VideoPlayer from './video.player';
 import { TbCode } from 'react-icons/tb';
 import { useDropzone } from 'react-dropzone'; // Use the hook version
-import { removeAndReorder, validateMediaLink } from '@/constants/variables/global.vars';
+import { decodeHTML, removeAndReorder, validateMediaLink } from '@/constants/variables/global.vars';
 import InputFieldStatic from './input.field.static';
 import { BsFileEarmarkPlay } from 'react-icons/bs';
 import { RiDeleteBin5Fill } from 'react-icons/ri';
@@ -159,6 +159,7 @@ const ContentUploader: FC<Props> = ({ librarySave, tagMedia, tagMeta, index, all
                         </div>
                     )}
                     <div
+                        style={{ marginLeft: postContent?.is_embeded ? "auto" : "" }}
                         onClick={() => {
                             //update this to be embeded specific;
                             const newState = source === "embeded" ? 0 : 1;
@@ -206,8 +207,9 @@ const ContentUploader: FC<Props> = ({ librarySave, tagMedia, tagMeta, index, all
                         value={postContent?.trailer ?? ""}
                         placeholder='Enter Trailer Video link or iframe!'
                         onChange={(e) => {
-                            //update this to be content url;
-                            const lc = { ...postContent, trailer: !e.trim() ? undefined : e } as Content;
+                            const decoded = decodeHTML(e);
+                            //update this to be content trailer;
+                            const lc = { ...postContent, trailer: !decoded.trim() ? undefined : decoded } as Content;
 
                             const modifiedContent = allContents?.map((c) => c.id === lc?.id ? lc : c);
 
@@ -264,8 +266,9 @@ const ContentUploader: FC<Props> = ({ librarySave, tagMedia, tagMeta, index, all
                             value={postContent?.url ?? ""}
                             placeholder='Enter Embeded code'
                             onChange={(e) => {
+                                const decoded = decodeHTML(e);
                                 //update this to be content url;
-                                const lc = { ...postContent, url: e } as Content;
+                                const lc = { ...postContent, url: decoded } as Content;
 
                                 const modifiedContent = allContents?.map((c) => c.id === lc?.id ? lc : c);
 

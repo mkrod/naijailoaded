@@ -159,7 +159,7 @@ const VideoPlayer: FC<Props> = ({ thumbnail, data, totalTrack = 1, activeTrack =
                 className={`${styles.container}`}
             >
 
-            </div >
+            </div>
         )
         : data?.is_embeded ?
             (
