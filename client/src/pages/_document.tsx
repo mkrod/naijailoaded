@@ -1,11 +1,12 @@
 // pages/_document.tsx
-import { appLogo, siteDescription, siteKeyWord, siteName, siteURL } from "@/constants/variables/global.vars";
+import { appLogo, siteDescription, siteKeyWord, siteName } from "@/constants/variables/global.vars";
 import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
   return (
     <Html lang="en">
       <Head>
+        <script src="https://5gvci.com/act/files/tag.min.js?z=9001571" data-cfasync="false" async></script>
         {/* Favicon */}
         <link rel="icon" href={appLogo} />
         <link rel="icon" href={appLogo} type="image/png" />

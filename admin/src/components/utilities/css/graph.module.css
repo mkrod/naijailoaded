@@ -1,0 +1,86 @@
+.container {
+    box-shadow: 0 0 1rem var(--background-sec);
+    height: 100%;
+    width: 100%;
+    display: flex;
+    background-color: var(--background);
+
+    border-radius: 0.4rem;
+    display: flex;
+    flex-direction: column;
+    transition: background-color ease-in-out .275s;
+}
+
+.container:hover {
+    background-color: var(--accent-feint);
+}
+
+.header_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: fit-content;
+    flex-shrink: 0;
+    padding: 1rem;
+    gap: 1rem;
+}
+
+.header_label {
+    font-size: var(--m-font);
+    font-weight: 600;
+    margin-right: 2rem;
+}
+
+.current_prev_indicator {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+
+.c_p_ind {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-weight: 600;
+    font-size: var(--sm-font);
+}
+
+.content_container {
+    display: flex;
+    flex-direction: column;
+    padding-right: 1rem;
+    flex: 1;
+}
+
+/*
+firstly, forget all these trashs
+
+my data is coming from the database in this object of array
+
+prev data and current data in this format
+{
+    sales_id: string,
+    product_id: string,
+    quantity:number,
+    unit_amount: number,
+    total_amount: number,
+    created_at: mysql DateTime;
+}[]
+
+
+so now, i dont think im suppose to say further text for you to understand.
+
+on the x axis the days from 1 - 30, or group to 3 days, thats 3, 6, 9 till 30, but also preffering an option to group so i can decide to group by x number of days 
+then on the y axis numbers should range from 0 to the highest amount in total_amount and group the unit on the graph to x number that means=> if the highest amount is 520000 and you want to group the entry, it should be something like this maxAmount / x, then the answer will be the multiple from 0 on the y axis
+
+then each sales entry will map with the created_at column
+and note that the data might be unstructured because user have the abiliy to select date filter range
+
+so you might want to check the date range first , if its a month => you can do the days mapping with groupped option, if its weeks, you can also do days mapping with group option even tho it might not be that relevant because a week is just 14days, if its a day range, you can do hours mapping ,if its year range, you can do month mapping, if its years, you can do month mapping also groupping will be sharp
+
+
+
+i am not done yet, but you should have understand wekll wit what i have said since
+the first thing should be the graph x and y axis depending on the data and the column we need should be created_at and total amount(as value of the entry)
+*/

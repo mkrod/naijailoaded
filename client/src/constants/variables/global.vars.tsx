@@ -202,9 +202,9 @@ export const subLinks = [
     { name: "Trending", path: "/trending" },
     { name: "DJ Mix", path: "/mix-tape" },
     { name: "Sport", path: "/sport" },
-    { name: "Advert", path: "/ads" },
     { name: "Movies", path: "/movies" },
-    { name: "Free Beats", path: "/free-beat" }
+    { name: "Free Beats", path: "/free-beat" },
+    { name: "Advert", path: "/ads" }
 ]
 
 

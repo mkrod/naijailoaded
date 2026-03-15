@@ -1,0 +1,63 @@
+.container {
+    box-shadow: 0 0 1rem var(--background-sec);
+    height: 7rem;
+    width: 16rem;
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    align-items: center;
+    background-color: var(--background);
+
+    border-radius: 0.4rem;
+    padding: 1rem 1.5rem;
+    cursor: no-drop;
+
+    transition: background-color ease-in-out .275s;
+}
+
+.container:hover {
+    background-color: var(--accent-feint);
+}
+
+.left_container {
+    width: 20%;
+}
+
+.icon_container {
+    height: 3rem;
+    width: 3rem;
+    border-radius: 50%;
+    box-shadow: 0 0 0.4rem var(--background-sec);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: whitesmoke;
+}
+
+.metric_raw_container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.title {
+    font-size: var(--lg-font);
+    font-weight: 700;
+}
+
+.metric_current_value {
+    font-size: var(--xl-font);
+    font-weight: bolder;
+}
+
+.metric_trend_container {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    margin-left: auto;
+}
+
+.percentage {
+    font-size: var(--sm-font);
+    font-weight: 600;
+}
