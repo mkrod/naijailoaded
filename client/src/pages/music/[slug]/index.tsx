@@ -141,6 +141,7 @@ const MusicView: FC<Props> = ({ data, sanitizedDescription, trendingPosts, postO
         } finally { setState({ sending: false }); }
     };
 
+    console.log("post of the week: ", postOfTheWeek);
 
     return (
         <>
