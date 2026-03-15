@@ -355,7 +355,7 @@ const CreatePost: FC = (): ReactNode => {
 
                                         return (
                                             <ContentUploader
-                                                title={`Media`}
+                                                title="Media"
                                                 index={index}
                                                 post={post}
                                                 updatePost={updatePost}

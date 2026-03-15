@@ -155,7 +155,7 @@ const VideoPlayer: FC<Props> = ({ thumbnail, data, totalTrack = 1, activeTrack =
     return data?.is_embeded ?
         (
             <div
-                dangerouslySetInnerHTML={{ __html: data.url }}
+                dangerouslySetInnerHTML={{ __html: data.trailer?.trim() ?? data.url }}
                 className={`${styles.container}`}
             >
 

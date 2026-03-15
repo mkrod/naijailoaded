@@ -15,6 +15,7 @@ import { RiDeleteBin5Fill } from 'react-icons/ri';
 import EditableInput from './input';
 import { useGlobalProvider } from '@/constants/providers/global.provider';
 import { brandImage, brandMusic, brandVideo } from '@/constants/controllers/misc.controller';
+import { SiTrillertv } from 'react-icons/si';
 
 interface Props {
     index: number;
@@ -122,6 +123,8 @@ const ContentUploader: FC<Props> = ({ librarySave, tagMedia, tagMeta, index, all
 
     const [ContentMode, setContentMode] = useState<"link" | "file">("file");
     const source = Boolean(postContent?.is_embeded) ? "embeded" : "direct";
+    const [showTrailerField, setShowTrailerField] = useState<boolean>(false);
+
 
     return (
         <div className={styles.media_uploader_container}>
@@ -129,14 +132,7 @@ const ContentUploader: FC<Props> = ({ librarySave, tagMedia, tagMeta, index, all
                 <div className={styles.media_uploader_header_label}>
                     {title}
 
-                    <div
-                        onClick={() => {
 
-                        }}
-                        className={`${styles.add_watermark} ${styles.is_watermark}`}
-                    >
-
-                    </div>
                     {source === "direct" && (
                         <div className={styles.mode_switch_container}>
                             <div
@@ -176,6 +172,15 @@ const ContentUploader: FC<Props> = ({ librarySave, tagMedia, tagMeta, index, all
                     >
                         <TbCode />
                     </div>
+                    {type === "video" && (
+                        <div
+                            title='Add Trailer (Piority)'
+                            onClick={() => setShowTrailerField(!showTrailerField)}
+                            className={`${styles.remove_slot}  ${!Boolean(showTrailerField) ? styles.not_embed : ""}`}
+                        >
+                            <SiTrillertv />
+                        </div>
+                    )}
                     <div
                         onClick={() => {
 
@@ -195,47 +200,14 @@ const ContentUploader: FC<Props> = ({ librarySave, tagMedia, tagMeta, index, all
                 </span>
             </div>
 
-
-
-            {source === "direct" && ContentMode === "file" && (/*!contentPreview &&*/ !postContent?.url) && (
-                <div className={styles.uploader_container}>
-                    <div {...getRootProps()} className={styles.thumbnanil_uploader}>
-                        <IoCloudUploadSharp size={25} color='var(--color-fade)' />
-                        <span style={{ textAlign: "center", width: "100%" }}>{isDragActive ? "Drop here..." : "Click to upload or drag and drop"}</span>
-                        <input {...getInputProps()} />
-                    </div>
-                </div>
-            )}
-            {source === "direct" && ContentMode === "link" && (
-                <div className={styles.thumbnail_input_field}>
-                    <InputFieldStatic
-                        value={postContent?.url ?? ""}
-                        placeholder='Enter Direct content Link'
-                        setValue={(link) => {
-                            //update this to be content url;
-                            const lc = { ...postContent, url: link } as Content;
-
-                            const modifiedContent = allContents?.map((c) => c.id === lc?.id ? lc : c);
-
-                            updatePost({ content: modifiedContent })
-
-                            if (validateMediaLink(link, type)) {
-                                handleModifyMedia({ link })
-                            }
-                        }}
-                        disabled={processingMedia}
-                    />
-                </div>
-            )}
-
-            {source === "embeded" && (
+            {showTrailerField && (
                 <div className={styles.thumbnail_input_field}>
                     <EditableInput
-                        value={postContent?.url ?? ""}
-                        placeholder='Enter Embeded code'
+                        value={postContent?.trailer ?? ""}
+                        placeholder='Enter Trailer Video link or iframe!'
                         onChange={(e) => {
                             //update this to be content url;
-                            const lc = { ...postContent, url: e } as Content;
+                            const lc = { ...postContent, trailer: !e.trim() ? undefined : e } as Content;
 
                             const modifiedContent = allContents?.map((c) => c.id === lc?.id ? lc : c);
 
@@ -247,26 +219,87 @@ const ContentUploader: FC<Props> = ({ librarySave, tagMedia, tagMeta, index, all
                     />
                 </div>
             )}
-            {!postContent?.is_embeded && (/*!contentPreview &&*/ postContent?.url) && (
-                <div className={styles.uploaded_container}>
-                    {getPlayer(type, postContent)}
-                    {(!post.is_album) && (
-                        <button
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                //removeFile();
-                            }}
-                            className={styles.thumbnail_replace_button}
-                            {...getRootProps()}
-                        >
-                            <MdOutlineFilePresent size={15} />
-                            Replace
+
+
+
+            {
+                source === "direct" && ContentMode === "file" && (/*!contentPreview &&*/ !postContent?.url) && (
+                    <div className={styles.uploader_container}>
+                        <div {...getRootProps()} className={styles.thumbnanil_uploader}>
+                            <IoCloudUploadSharp size={25} color='var(--color-fade)' />
+                            <span style={{ textAlign: "center", width: "100%" }}>{isDragActive ? "Drop here..." : "Click to upload or drag and drop"}</span>
                             <input {...getInputProps()} />
-                        </button>
-                    )}
-                </div>
-            )}
+                        </div>
+                    </div>
+                )
+            }
+            {
+                source === "direct" && ContentMode === "link" && (
+                    <div className={styles.thumbnail_input_field}>
+                        <InputFieldStatic
+                            value={postContent?.url ?? ""}
+                            placeholder='Enter Direct content Link'
+                            setValue={(link) => {
+                                //update this to be content url;
+                                const lc = { ...postContent, url: link } as Content;
+
+                                const modifiedContent = allContents?.map((c) => c.id === lc?.id ? lc : c);
+
+                                updatePost({ content: modifiedContent })
+
+                                if (validateMediaLink(link, type)) {
+                                    handleModifyMedia({ link })
+                                }
+                            }}
+                            disabled={processingMedia}
+                        />
+                    </div>
+                )
+            }
+
+            {
+                source === "embeded" && (
+                    <div className={styles.thumbnail_input_field}>
+                        <EditableInput
+                            value={postContent?.url ?? ""}
+                            placeholder='Enter Embeded code'
+                            onChange={(e) => {
+                                //update this to be content url;
+                                const lc = { ...postContent, url: e } as Content;
+
+                                const modifiedContent = allContents?.map((c) => c.id === lc?.id ? lc : c);
+
+                                updatePost({ content: modifiedContent })
+                            }}
+                            AIdisabled
+                            disableFormatting
+
+                        />
+                    </div>
+                )
+            }
+            {
+                !postContent?.is_embeded && (/*!contentPreview &&*/ postContent?.url) && (
+                    <div className={styles.uploaded_container}>
+                        {getPlayer(type, postContent)}
+                        {(!post.is_album) && (
+                            <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    //removeFile();
+                                }}
+                                className={styles.thumbnail_replace_button}
+                                {...getRootProps()}
+                            >
+                                <MdOutlineFilePresent size={15} />
+                                Replace
+                                <input {...getInputProps()} />
+                            </button>
+                        )}
+                    </div>
+                )
+            }
 
             {/*!postContent?.is_embeded && (contentPreview) && (
                 <div className={styles.uploaded_container}>
@@ -283,7 +316,7 @@ const ContentUploader: FC<Props> = ({ librarySave, tagMedia, tagMeta, index, all
                     </button>
                 </div>
             )*/}
-        </div>
+        </div >
     )
 }
 

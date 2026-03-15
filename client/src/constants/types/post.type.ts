@@ -12,6 +12,7 @@ export interface Content {
     */
     is_embeded?: number;// parse as Boolean()
     url: string;
+    trailer?: string;
 }
 
 export interface PostOtherMetaData {
