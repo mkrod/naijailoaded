@@ -13,11 +13,12 @@
 
     text-decoration: none;
     color: var(--color);
+    padding: 1rem;
 }
 
 .container:hover {
     background-color: var(--accent-feint);
-    padding: 1rem;
+
 }
 
 .image_container {

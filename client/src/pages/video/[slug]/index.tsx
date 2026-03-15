@@ -25,6 +25,8 @@ import { APIArrayResponse, Response } from '@/constants/types/global.types';
 import Share from '@/components/utilities/share';
 import HorizontalCard from '@/components/utilities/horizontal.card';
 import AlbumChildCard from '@/components/utilities/album.child.card';
+import PostOfTheWeek from '@/components/utilities/post.of.the.week';
+import TrendingPosts from '@/components/utilities/trending.posts';
 
 interface State {
     isMounted: boolean;
@@ -64,6 +66,8 @@ interface Props {
     data: Post;
     sanitizedDescription: string;
     similarPosts: APIArrayResponse;
+    trendingPosts: APIArrayResponse<Post[]>;
+    postOfTheWeek: Post | undefined;
 }
 
 const VideoPlayer = dynamic(() => import('@/components/utilities/video.player'), {
@@ -71,7 +75,7 @@ const VideoPlayer = dynamic(() => import('@/components/utilities/video.player'),
     loading: () => <div style={{ minHeight: '150px' }} />
 });
 
-const VideoView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
+const VideoView: FC<Props> = ({ data, sanitizedDescription, trendingPosts, postOfTheWeek }) => {
     const { isMobile, setNote } = useGlobalProvider();
 
     // Cleaner State Management
@@ -306,23 +310,44 @@ const VideoView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
                     </section>
                 </section>
 
-                {similarPosts?.results?.length > 0 && (
-                    <section className={styles.others_container}>
-                        <header className={styles.section_two_header}>
-                            {/* H2 helps rank these related video titles */}
-                            <h2 className={styles.section_two_header_text}>You might also like</h2>
-                            <div className={styles.section_two_header_line} />
-                        </header>
-                        {/* Changed main to ul for list semantics */}
-                        <ul className={styles[`${mobileClass}section_two_contents`]}>
-                            {similarPosts?.results?.slice(0, 12)?.map((sp) => (
-                                <li key={sp.post_id} style={{ listStyle: 'none' }}>
-                                    <HorizontalCard data={sp} />
-                                </li>
-                            ))}
-                        </ul>
-                    </section>
+                {trendingPosts.results?.length > 0 && (
+                    <div className={styles.trending_posts_container}>
+                        <TrendingPosts
+                            posts={trendingPosts?.results ?? []}
+                        />
+                    </div>
                 )}
+
+                <div className={styles[`${mobileClass}others_container`]}>
+                    {postOfTheWeek && (
+                        <div className={styles.post_of_the_week_container}>
+                            <PostOfTheWeek
+                                post={postOfTheWeek}
+                            />
+                        </div>
+                    )}
+                    {(data as any).related?.length > 0 && (
+                        <section className={styles.related_container}>
+                            <header className={styles.section_two_header}>
+                                <h2 className={styles.section_two_header_text}>You might also like</h2>
+                                <div className={styles.section_two_header_line} />
+                            </header>
+                            {/* Changed from div to ul/li list for better SEO ranking of related items */}
+                            <ul
+                                style={{
+                                    gridTemplateColumns: postOfTheWeek ? "grid-template-columns: repeat(3, 1fr)" : "grid-template-columns: repeat(4, 1fr)"
+                                }}
+                                className={styles[`${mobileClass}section_two_contents`]}
+                            >
+                                {(data as any).related.slice(0, 12).map((sp: Post) => (
+                                    <li key={sp.post_id} style={{ listStyle: 'none' }}>
+                                        <HorizontalCard data={sp} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    )}
+                </div>
             </main >
         </>
     );
@@ -350,13 +375,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         });
 
         const { data: similarPosts } = await getPosts({ content_type: data.content_type, title: slug.split("-")[0] } as PostFilter);
+        const { data: trendingPosts } = await getPosts({ is_trending: true, limit: 12 });
+
+        const { data: postOfTheWeek } = await getPosts({ post_of_the_week: true }) as Response<APIArrayResponse<Post[]>>
+        const POTW = postOfTheWeek?.results[0] as Post | undefined;
 
 
         return {
             props: {
                 data,
                 sanitizedDescription,
-                similarPosts
+                similarPosts,
+                trendingPosts,
+                postOfTheWeek: POTW
             }
         };
     } catch (e) {

@@ -3,7 +3,7 @@ import styles from "./css/post.others.updater.module.css";
 import { Checkbox, Radio } from "@mui/material";
 import type { Post } from "@/constants/types/post.type";
 import type { Schedule } from "@/pages/post.create";
-import { clientURL, formatDate, formatTimeHM } from "@/constants/variables/global.vars";
+import { clientURL, formatDate, formatTimeHM, isOlderThan7Days } from "@/constants/variables/global.vars";
 import DateTimeSelector from "./date.time.selector";
 import { MdOutlineCalendarMonth } from "react-icons/md";
 import { LuClock } from "react-icons/lu";
@@ -180,6 +180,17 @@ const PostOthersUpdater: FC<Props> = ({ librarySave, updateLibrarySave, tagMeta,
                             }}
                         />
                         <span>Trending Post</span>
+                    </div>
+                    <div className={styles.radio_container}>
+                        <Checkbox
+                            checked={!isOlderThan7Days(post?.post_of_the_week ?? "")}
+                            onChange={(_, state) => {
+                                updatePost({
+                                    post_of_the_week: state ? new Date() : null, //log typeoff this, if its Date then use your intent
+                                })
+                            }}
+                        />
+                        <span>Post of the week</span>
                     </div>
                 </div>
 

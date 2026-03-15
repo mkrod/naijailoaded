@@ -56,10 +56,10 @@ export interface NavLink {
 }
 
 
-export interface APIArrayResponse {
+export interface APIArrayResponse<T = any[]> {
     page: string;
     perPage: string;
     totalResult: string;
     hasNext: boolean;
-    results: any[];
+    results: T;
 }

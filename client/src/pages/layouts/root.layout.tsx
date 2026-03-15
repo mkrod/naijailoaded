@@ -9,24 +9,29 @@ interface Props {
     children: ReactNode;
 }
 
+
 const RootLayout: FC<Props> = ({ children }): ReactNode => {
     const { isMobile } = useGlobalProvider();
 
 
-    return isMobile ? (
-        <>
-            <MobileNavbar>
-                {children}
-            </MobileNavbar>
-            <Footer />
-        </>
-    ) : (
-        <>
-            <DesktopNavbar>
-                {children}
-            </DesktopNavbar>
-            <Footer />
-        </>
+    return (
+        <div className={styles.layout_container}>
+            {isMobile ? (
+                <>
+                    <MobileNavbar>
+                        {children}
+                    </MobileNavbar>
+                    <Footer />
+                </>
+            ) : (
+                <>
+                    <DesktopNavbar>
+                        {children}
+                    </DesktopNavbar>
+                    <Footer />
+                </>
+            )}
+        </div>
     )
 }
 

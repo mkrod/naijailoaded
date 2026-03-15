@@ -6,7 +6,7 @@ import { useGlobalProvider } from '@/constants/providers/global.provider'
 import InputField from './input.field'
 import { LuDot } from 'react-icons/lu'
 import { FaFacebookSquare } from 'react-icons/fa'
-import { FaInstagram, FaSquareXTwitter, FaYoutube } from 'react-icons/fa6'
+import { FaInstagram, FaSquareXTwitter, FaWhatsapp, FaYoutube } from 'react-icons/fa6'
 import { SiAudiomack } from 'react-icons/si'
 
 const miscLink = [
@@ -116,6 +116,14 @@ const Footer: FC = (): ReactNode => {
                             href="https://www.youtube.com/channel/UCLPbV36QfyXqZzEnVyA2uiA"
                         >
                             <FaYoutube size="100%" color='#d20000' />
+                        </Link>
+                        <Link
+                            title='WhatsApp'
+                            target="_blank"
+                            className={styles.social_link}
+                            href="https://wa.me/2349039238837"
+                        >
+                            <FaWhatsapp size="100%" color='#16b900' />
                         </Link>
                         <Link
                             title='Audiomack'

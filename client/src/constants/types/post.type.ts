@@ -77,9 +77,18 @@ export interface PostSQLResult {
     is_trending: number;
 
     /**
-     * the parent_id if post is track of an album
-     */
+    * if post is music of the week
+    * contains the start date of from when it was!
+    * became invalid if start date >= 8 days
+    * meaning it is no longer music of the week
+    */
+    post_of_the_week?: Date | null;
+
+    /**
+    * the parent_id if post is track of an album
+    */
     parent_id: string;
+
     /**
     * is content an album
     */
@@ -126,6 +135,13 @@ export interface PostFilter {
     comment_enabled?: boolean;
     is_external?: boolean;
     is_trending?: boolean;
+    /**
+    * send today's date here
+    * so that we will check for 
+    * post.music_of_the_week that has its value < 8 not >= filter.music_of_the_week =>
+    * (which is todays date)
+    */
+    post_of_the_week?: boolean;
     cursorCreatedAt?: string;
     cursorId?: string;
     order?: "newest" | "oldest";

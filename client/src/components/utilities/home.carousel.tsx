@@ -152,7 +152,7 @@ const HomeCarousel: FC<Props> = ({
                                 draggable={false}
                             />
                             <Link
-                                href={`${item.content_type}/${item.slug}`}
+                                href={`/${item.content_type}/${item.slug}`}
                                 className={styles.meta_container}
                             >
                                 <div className={styles.meta_label_type}>

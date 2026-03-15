@@ -664,3 +664,18 @@ export async function getFileSize(url: string): Promise<string> {
         return "Error fetching size";
     }
 }
+
+export const isOlderThan7Days = (sqlDate: string | Date): boolean => {
+    const date = new Date(sqlDate);
+
+    // Check if the date is valid
+    if (isNaN(date.getTime())) {
+        return true;
+        //throw new Error("Invalid date provided to isOlderThan7Days");
+    }
+
+    const now = Date.now();
+    const sevenDaysInMs = 604800000; // 7 * 24 * 60 * 60 * 1000
+
+    return (now - date.getTime()) > sevenDaysInMs;
+};

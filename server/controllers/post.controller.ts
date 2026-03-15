@@ -30,6 +30,8 @@ export const getPosts = async (req: AuthRequest, res: Response) => {
         if (q.is_trending === "true") filter.is_trending = true;
         if (q.is_trending === "false") filter.is_trending = false;
 
+
+
         const orderDirection = filter.order === "oldest" ? "ASC" : "DESC";
 
         // --- Build conditions ---
@@ -58,6 +60,11 @@ export const getPosts = async (req: AuthRequest, res: Response) => {
         if (filter.is_trending && filter.is_trending !== undefined) {
             conditions.push("p.is_trending = ?");
             values.push(filter.is_trending ? 1 : 0);
+        }
+
+        if (q.post_of_the_week === "true") {
+            // Ensures the date is within the last 7 days AND not a future date
+            conditions.push("p.post_of_the_week BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW()");
         }
 
         // --- Base SQL with Subquery for Child Content ---

@@ -105,7 +105,7 @@ export const brandVideo = async (req: AuthRequest, res: Response) => {
                         message,
                         data: {
                             id: library_id,
-                            url: publicUrl
+                            url: link
                         }
                     })
                 }
@@ -118,7 +118,7 @@ export const brandVideo = async (req: AuthRequest, res: Response) => {
                     message: "Success",
                     data: {
                         id: library_id,
-                        url: publicUrl
+                        url: link
                     }
                 })
             }

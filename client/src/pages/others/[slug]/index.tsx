@@ -19,10 +19,12 @@ import { siteName, clientURL, DefaultAPIArrayResponse, formatDate } from '@/cons
 import { Comment } from '@/constants/types/comments.types';
 import { GetServerSideProps } from 'next';
 import { getPost, getPosts } from '@/constants/controllers/posts.controller';
-import { APIArrayResponse } from '@/constants/types/global.types';
+import { APIArrayResponse, Response } from '@/constants/types/global.types';
 import Share from '@/components/utilities/share';
 import HorizontalCard from '@/components/utilities/horizontal.card';
 import ImageViewer from '@/components/utilities/viewable_image';
+import TrendingPosts from '@/components/utilities/trending.posts';
+import PostOfTheWeek from '@/components/utilities/post.of.the.week';
 
 interface State {
     isMounted: boolean;
@@ -51,9 +53,11 @@ interface Props {
     data: Post;
     sanitizedDescription: string;
     similarPosts: APIArrayResponse;
+    trendingPosts: APIArrayResponse<Post[]>;
+    postOfTheWeek: Post | undefined;
 }
 
-const OthersView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => {
+const OthersView: FC<Props> = ({ data, sanitizedDescription, similarPosts, trendingPosts, postOfTheWeek }) => {
     const { isMobile, setNote } = useGlobalProvider();
     const [state, setState] = useReducer(reducer, initialState);
     const [createdAt, setCreatedAt] = useState<string | null>(null);
@@ -210,21 +214,44 @@ const OthersView: FC<Props> = ({ data, sanitizedDescription, similarPosts }) => 
                     </aside>
                 </section>
 
-                {similarPosts?.results?.length > 0 && (
-                    <section className={styles.others_container}>
-                        <header className={styles.section_two_header}>
-                            <h2 className={styles.section_two_header_text}>Related Content</h2>
-                            <div className={styles.section_two_header_line} />
-                        </header>
-                        <ul className={styles[`${mobileClass}section_two_contents`]}>
-                            {similarPosts.results.slice(0, 12).map((sp: Post) => (
-                                <li key={sp.post_id} style={{ listStyle: 'none' }}>
-                                    <HorizontalCard data={sp} />
-                                </li>
-                            ))}
-                        </ul>
-                    </section>
+                {trendingPosts.results?.length > 0 && (
+                    <div className={styles.trending_posts_container}>
+                        <TrendingPosts
+                            posts={trendingPosts?.results ?? []}
+                        />
+                    </div>
                 )}
+
+                <div className={styles[`${mobileClass}others_container`]}>
+                    {postOfTheWeek && (
+                        <div className={styles.post_of_the_week_container}>
+                            <PostOfTheWeek
+                                post={postOfTheWeek}
+                            />
+                        </div>
+                    )}
+                    {(data as any).related?.length > 0 && (
+                        <section className={styles.related_container}>
+                            <header className={styles.section_two_header}>
+                                <h2 className={styles.section_two_header_text}>You might also like</h2>
+                                <div className={styles.section_two_header_line} />
+                            </header>
+                            {/* Changed from div to ul/li list for better SEO ranking of related items */}
+                            <ul
+                                style={{
+                                    gridTemplateColumns: postOfTheWeek ? "grid-template-columns: repeat(3, 1fr)" : "grid-template-columns: repeat(4, 1fr)"
+                                }}
+                                className={styles[`${mobileClass}section_two_contents`]}
+                            >
+                                {(data as any).related.slice(0, 12).map((sp: Post) => (
+                                    <li key={sp.post_id} style={{ listStyle: 'none' }}>
+                                        <HorizontalCard data={sp} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    )}
+                </div>
             </main>
         </>
     );
@@ -250,7 +277,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             title: slug.split("-")[0] // Simple keyword match from slug
         } as PostFilter);
 
-        return { props: { data, sanitizedDescription, similarPosts } };
+        const { data: trendingPosts } = await getPosts({ is_trending: true, limit: 12 });
+
+        const { data: postOfTheWeek } = await getPosts({ post_of_the_week: true }) as Response<APIArrayResponse<Post[]>>
+        const POTW = postOfTheWeek?.results[0] as Post | undefined;
+
+        return { props: { data, sanitizedDescription, similarPosts, trendingPosts, postOfTheWeek: POTW } };
     } catch (e) {
         return { notFound: true };
     }
