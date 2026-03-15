@@ -685,3 +685,20 @@ export const decodeHTML = (str: string) => {
     txt.innerHTML = str;
     return txt.value;
 };
+
+export const editIframeSize = (html: string, { width = "100%", height = "100%" }: { width: string; height: string }) => {
+    // Create a temporary container
+    const div = document.createElement("div");
+    div.innerHTML = html;
+
+    // Update all iframes inside
+    div.querySelectorAll("iframe").forEach((iframe) => {
+        iframe.width = width;   // sets width attribute
+        iframe.height = height; // sets height attribute
+        iframe.style.width = width;   // also sets inline style
+        iframe.style.height = height; // also sets inline style
+    });
+
+    // Return the modified HTML
+    return div.innerHTML;
+};

@@ -8,7 +8,7 @@ import MusicPlayer from './music.player';
 import VideoPlayer from './video.player';
 import { TbCode } from 'react-icons/tb';
 import { useDropzone } from 'react-dropzone'; // Use the hook version
-import { decodeHTML, removeAndReorder, validateMediaLink } from '@/constants/variables/global.vars';
+import { decodeHTML, editIframeSize, removeAndReorder, validateMediaLink } from '@/constants/variables/global.vars';
 import InputFieldStatic from './input.field.static';
 import { BsFileEarmarkPlay } from 'react-icons/bs';
 import { RiDeleteBin5Fill } from 'react-icons/ri';
@@ -209,7 +209,7 @@ const ContentUploader: FC<Props> = ({ librarySave, tagMedia, tagMeta, index, all
                         onChange={(e) => {
                             const decoded = decodeHTML(e);
                             //update this to be content trailer;
-                            const lc = { ...postContent, trailer: !decoded.trim() ? undefined : decoded } as Content;
+                            const lc = { ...postContent, trailer: !decoded.trim() ? undefined : editIframeSize(decoded, { width: "100%", height: "100%" }) } as Content;
 
                             const modifiedContent = allContents?.map((c) => c.id === lc?.id ? lc : c);
 
@@ -268,7 +268,7 @@ const ContentUploader: FC<Props> = ({ librarySave, tagMedia, tagMeta, index, all
                             onChange={(e) => {
                                 const decoded = decodeHTML(e);
                                 //update this to be content url;
-                                const lc = { ...postContent, url: decoded } as Content;
+                                const lc = { ...postContent, url: editIframeSize(decoded, { width: "100%", height: "100%" }) } as Content;
 
                                 const modifiedContent = allContents?.map((c) => c.id === lc?.id ? lc : c);
 

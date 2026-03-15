@@ -97,8 +97,4 @@
 }
 
 /* Mobile landscape fix for browsers that block auto-rotation */
-@media (max-width: 768px) and (orientation: portrait) {
-    .full_container {
-        /* Optional: You can force a 90deg rotation here if orientation lock fails */
-    }
-}
+@media (max-width: 768px) and (orientation: portrait) {}
